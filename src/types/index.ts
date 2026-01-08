@@ -53,12 +53,17 @@ export interface StaffUser {
   fechaInvitacion: Date;
 }
 
+export type AthleteCategory = 'principiante' | 'intermedio' | 'avanzado' | 'profesional' | 'infantil' | 'juvenil' | 'adulto';
+
 export interface Athlete {
   id: string;
   establecimientoId: string;
   nombre: string;
   identificacion?: string;
   deporte: string;
+  deportePersonalizado?: string;
+  fechaNacimiento?: Date;
+  categoria?: AthleteCategory;
   telefono: string;
   email: string;
   montoMensual: number;
@@ -68,6 +73,9 @@ export interface Athlete {
   estadoSistema: SystemStatus;
   estadoManual: ManualStatus;
   avatarUrl?: string;
+  referidoPor?: string;
+  validado?: boolean;
+  agregadoPor?: string;
 }
 
 export interface Transaction {
@@ -75,11 +83,15 @@ export interface Transaction {
   athleteId: string;
   fecha: Date;
   monto: number;
+  montoPersonalizado?: number;
+  mesesPagados: number;
   metodoPago: string;
   registradoPor: string;
+  registradoPorNombre?: string;
   referencia?: string;
   moneda: string;
   observaciones?: string;
+  comprobanteUrl?: string;
 }
 
 export interface AppState {

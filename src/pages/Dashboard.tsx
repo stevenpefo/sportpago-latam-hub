@@ -66,9 +66,15 @@ export default function Dashboard() {
     setPaymentModalOpen(true);
   };
 
-  const handleConfirmPayment = (metodoPago: string, referencia?: string, observaciones?: string) => {
+  const handleConfirmPayment = (
+    metodoPago: string, 
+    mesesPagados: number,
+    montoPersonalizado?: number,
+    referencia?: string, 
+    observaciones?: string
+  ) => {
     if (selectedAthlete) {
-      registerPayment(selectedAthlete.id, metodoPago, referencia, observaciones);
+      registerPayment(selectedAthlete.id, metodoPago, mesesPagados, montoPersonalizado, referencia, observaciones);
     }
   };
 

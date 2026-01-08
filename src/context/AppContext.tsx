@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { AppState, AdminUser, StaffUser, Establecimiento, Athlete, Transaction, UserRole, PaymentMethod } from '@/types';
+import { AppState, AdminUser, StaffUser, Establecimiento, Athlete, Transaction, UserRole, PaymentMethod, AthleteCategory } from '@/types';
 import { DEFAULT_PAYMENT_METHODS } from '@/data/countries';
+import { addDays } from 'date-fns';
 
 interface AppContextType extends AppState {
   login: (email: string, password: string) => Promise<boolean>;
@@ -13,7 +14,14 @@ interface AppContextType extends AppState {
   addStaff: (staff: Omit<StaffUser, 'id' | 'codigoAcceso' | 'fechaInvitacion'>) => void;
   updateStaff: (id: string, data: Partial<StaffUser>) => void;
   deleteStaff: (id: string) => void;
-  registerPayment: (athleteId: string, metodoPago: string, referencia?: string, observaciones?: string) => void;
+  registerPayment: (
+    athleteId: string, 
+    metodoPago: string, 
+    mesesPagados: number,
+    montoPersonalizado?: number,
+    referencia?: string, 
+    observaciones?: string
+  ) => void;
   updatePaymentMethods: (methods: PaymentMethod[]) => void;
   markAsPending: (athleteId: string) => void;
   markAsInactive: (athleteId: string) => void;
@@ -269,29 +277,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const registerPayment = useCallback((
     athleteId: string, 
     metodoPago: string, 
+    mesesPagados: number = 1,
+    montoPersonalizado?: number,
     referencia?: string, 
     observaciones?: string
   ) => {
     const athlete = state.athletes.find(a => a.id === athleteId);
     if (!athlete || !state.establecimiento) return;
 
+    const montoBase = athlete.montoMensual * mesesPagados;
+    const montoFinal = montoPersonalizado ?? montoBase;
+
     const transaction: Transaction = {
       id: generateId(),
       athleteId,
       fecha: new Date(),
-      monto: athlete.montoMensual,
+      monto: montoFinal,
+      montoPersonalizado: montoPersonalizado,
+      mesesPagados,
       metodoPago,
       registradoPor: state.currentUser 
-        ? `${state.userRole}:${state.currentUser.nombre}` 
+        ? `${state.userRole}:${state.currentUser.id}` 
         : 'sistema',
+      registradoPorNombre: state.currentUser?.nombre || 'Sistema',
       referencia,
       moneda: state.establecimiento.moneda,
       observaciones,
     };
 
-    // Calculate next payment date (add 1 month from current proximoPago)
-    const nextPayment = new Date(athlete.proximoPago);
-    nextPayment.setMonth(nextPayment.getMonth() + 1);
+    // Calculate next payment date based on months paid (30 days per month)
+    const nextPayment = addDays(new Date(), 30 * mesesPagados);
 
     setState(prev => ({
       ...prev,

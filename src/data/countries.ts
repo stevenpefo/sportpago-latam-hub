@@ -32,18 +32,30 @@ export const DEFAULT_PAYMENT_METHODS = [
 
 export const SPORTS = [
   'Fútbol',
+  'Fútbol de Salón',
   'Baloncesto',
-  'Voleibol',
-  'Natación',
   'Tenis',
-  'Atletismo',
-  'Gimnasia',
-  'Artes Marciales',
+  'Natación',
   'Boxeo',
+  'Artes Marciales',
+  'GYM / Fitness',
   'Ciclismo',
+  'Atletismo',
+  'Voleibol',
+  'Gimnasia',
   'CrossFit',
   'Yoga',
   'Pilates',
   'Danza',
-  'Otro',
+  'Otros',
+];
+
+export const ATHLETE_CATEGORIES = [
+  { value: 'principiante', label: 'Principiante' },
+  { value: 'intermedio', label: 'Intermedio' },
+  { value: 'avanzado', label: 'Avanzado' },
+  { value: 'profesional', label: 'Profesional' },
+  { value: 'infantil', label: 'Infantil' },
+  { value: 'juvenil', label: 'Juvenil' },
+  { value: 'adulto', label: 'Adulto' },
 ];
