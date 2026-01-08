@@ -3,7 +3,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
 import { useApp } from '@/context/AppContext';
-import { Athlete } from '@/types';
+import { Athlete, AthleteCategory } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,8 +21,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Search, Users } from 'lucide-react';
-import { SPORTS } from '@/data/countries';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Plus, Search, Users, CalendarIcon } from 'lucide-react';
+import { SPORTS, ATHLETE_CATEGORIES } from '@/data/countries';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 export default function Athletes() {
   const { 
@@ -40,10 +49,13 @@ export default function Athletes() {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
 
-  // New athlete form state
+  // New athlete form state with new fields
   const [newAthlete, setNewAthlete] = useState({
     nombre: '',
     deporte: '',
+    deportePersonalizado: '',
+    fechaNacimiento: undefined as Date | undefined,
+    categoria: '' as AthleteCategory | '',
     telefono: '',
     email: '',
     montoMensual: '',
@@ -60,9 +72,15 @@ export default function Athletes() {
     setPaymentModalOpen(true);
   };
 
-  const handleConfirmPayment = (metodoPago: string, referencia?: string, observaciones?: string) => {
+  const handleConfirmPayment = (
+    metodoPago: string, 
+    mesesPagados: number,
+    montoPersonalizado?: number,
+    referencia?: string, 
+    observaciones?: string
+  ) => {
     if (selectedAthlete) {
-      registerPayment(selectedAthlete.id, metodoPago, referencia, observaciones);
+      registerPayment(selectedAthlete.id, metodoPago, mesesPagados, montoPersonalizado, referencia, observaciones);
     }
   };
 
@@ -73,10 +91,17 @@ export default function Athletes() {
       proximoPago.setMonth(proximoPago.getMonth() + 1);
     }
 
+    const deporteFinal = newAthlete.deporte === 'Otros' 
+      ? newAthlete.deportePersonalizado || 'Otros'
+      : newAthlete.deporte;
+
     addAthlete({
       establecimientoId: establecimiento?.id || '',
       nombre: newAthlete.nombre,
-      deporte: newAthlete.deporte,
+      deporte: deporteFinal,
+      deportePersonalizado: newAthlete.deporte === 'Otros' ? newAthlete.deportePersonalizado : undefined,
+      fechaNacimiento: newAthlete.fechaNacimiento,
+      categoria: newAthlete.categoria || undefined,
       telefono: newAthlete.telefono,
       email: newAthlete.email,
       montoMensual: parseFloat(newAthlete.montoMensual) || 0,
@@ -88,6 +113,9 @@ export default function Athletes() {
     setNewAthlete({
       nombre: '',
       deporte: '',
+      deportePersonalizado: '',
+      fechaNacimiento: undefined,
+      categoria: '',
       telefono: '',
       email: '',
       montoMensual: '',
@@ -98,6 +126,7 @@ export default function Athletes() {
 
   const currencySymbol = establecimiento?.simboloMoneda || '$';
   const isAdmin = userRole === 'admin';
+  const canAddAthletes = isAdmin || userRole === 'staff'; // Staff can also add if permitted
 
   return (
     <AppLayout>
@@ -109,7 +138,7 @@ export default function Athletes() {
             <p className="text-sm text-muted-foreground">{athletes.length} registrados</p>
           </div>
           
-          {isAdmin && (
+          {canAddAthletes && (
             <Dialog open={addModalOpen} onOpenChange={setAddModalOpen}>
               <DialogTrigger asChild>
                 <Button className="gradient-primary">
@@ -117,7 +146,7 @@ export default function Athletes() {
                   Agregar
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] mx-4">
+              <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Nuevo Deportista</DialogTitle>
                 </DialogHeader>
@@ -132,11 +161,12 @@ export default function Athletes() {
                     />
                   </div>
 
+                  {/* Sport Dropdown */}
                   <div className="space-y-2">
                     <Label htmlFor="deporte">Deporte</Label>
                     <Select
                       value={newAthlete.deporte}
-                      onValueChange={(value) => setNewAthlete({ ...newAthlete, deporte: value })}
+                      onValueChange={(value) => setNewAthlete({ ...newAthlete, deporte: value, deportePersonalizado: '' })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Seleccionar deporte" />
@@ -145,6 +175,74 @@ export default function Athletes() {
                         {SPORTS.map((sport) => (
                           <SelectItem key={sport} value={sport}>
                             {sport}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Custom Sport Input - only shows when "Otros" is selected */}
+                  {newAthlete.deporte === 'Otros' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="deportePersonalizado">Especificar deporte</Label>
+                      <Input
+                        id="deportePersonalizado"
+                        placeholder="Ej: Patinaje, Escalada..."
+                        value={newAthlete.deportePersonalizado}
+                        onChange={(e) => setNewAthlete({ ...newAthlete, deportePersonalizado: e.target.value })}
+                      />
+                    </div>
+                  )}
+
+                  {/* Date of Birth */}
+                  <div className="space-y-2">
+                    <Label>Fecha de Nacimiento</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !newAthlete.fechaNacimiento && 'text-muted-foreground'
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {newAthlete.fechaNacimiento ? (
+                            format(newAthlete.fechaNacimiento, 'dd/MM/yyyy', { locale: es })
+                          ) : (
+                            <span>Seleccionar fecha</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={newAthlete.fechaNacimiento}
+                          onSelect={(date) => setNewAthlete({ ...newAthlete, fechaNacimiento: date })}
+                          disabled={(date) => date > new Date()}
+                          initialFocus
+                          captionLayout="dropdown-buttons"
+                          fromYear={1940}
+                          toYear={new Date().getFullYear()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {/* Category Dropdown */}
+                  <div className="space-y-2">
+                    <Label htmlFor="categoria">Categoría</Label>
+                    <Select
+                      value={newAthlete.categoria}
+                      onValueChange={(value) => setNewAthlete({ ...newAthlete, categoria: value as AthleteCategory })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar categoría" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ATHLETE_CATEGORIES.map((cat) => (
+                          <SelectItem key={cat.value} value={cat.value}>
+                            {cat.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -216,7 +314,7 @@ export default function Athletes() {
                   <Button
                     className="flex-1 gradient-primary"
                     onClick={handleAddAthlete}
-                    disabled={!newAthlete.nombre || !newAthlete.deporte || !newAthlete.montoMensual}
+                    disabled={!newAthlete.nombre || !newAthlete.deporte || !newAthlete.montoMensual || (newAthlete.deporte === 'Otros' && !newAthlete.deportePersonalizado)}
                   >
                     Guardar
                   </Button>
@@ -243,7 +341,7 @@ export default function Athletes() {
             <div className="text-center py-12 text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p>No se encontraron deportistas</p>
-              {isAdmin && (
+              {canAddAthletes && (
                 <Button 
                   variant="link" 
                   className="mt-2"
