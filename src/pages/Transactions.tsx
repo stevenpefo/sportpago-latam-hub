@@ -1,13 +1,16 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useApp } from '@/context/AppContext';
 import { Card } from '@/components/ui/card';
-import { Receipt, TrendingUp, Calendar, Banknote } from 'lucide-react';
+import { Receipt, TrendingUp, Calendar, Banknote, FileText } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
+import { PaymentMethodFilter } from '@/components/transactions/PaymentMethodFilter';
 
 export default function Transactions() {
   const { transactions, athletes, establecimiento } = useApp();
   const currencySymbol = establecimiento?.simboloMoneda || '$';
+
+  const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
 
   const formatCurrency = (amount: number) => {
     return `${currencySymbol}${amount.toLocaleString()}`;
@@ -45,10 +48,20 @@ export default function Transactions() {
     return establecimiento?.metodosPago.find(m => m.id === methodId)?.nombre || methodId;
   };
 
-  // Sort transactions by date, newest first
-  const sortedTransactions = [...transactions].sort(
-    (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-  );
+  // Filter and sort transactions
+  const filteredTransactions = useMemo(() => {
+    let result = [...transactions];
+
+    // Apply payment method filter
+    if (selectedMethods.length > 0) {
+      result = result.filter(t => selectedMethods.includes(t.metodoPago));
+    }
+
+    // Sort by date, newest first
+    return result.sort(
+      (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+    );
+  }, [transactions, selectedMethods]);
 
   return (
     <AppLayout>
@@ -76,19 +89,40 @@ export default function Transactions() {
           />
         </div>
 
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2">
+          <PaymentMethodFilter
+            paymentMethods={establecimiento?.metodosPago || []}
+            selectedMethods={selectedMethods}
+            onFilterChange={setSelectedMethods}
+          />
+        </div>
+
         {/* Transactions List */}
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">
-            Últimas transacciones
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-foreground">
+              Últimas transacciones
+            </h2>
+            {selectedMethods.length > 0 && (
+              <span className="text-sm text-muted-foreground">
+                {filteredTransactions.length} resultado(s)
+              </span>
+            )}
+          </div>
 
-          {sortedTransactions.length === 0 ? (
+          {filteredTransactions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Receipt className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No hay transacciones registradas</p>
+              <p>
+                {selectedMethods.length > 0 
+                  ? 'No hay transacciones con los filtros seleccionados'
+                  : 'No hay transacciones registradas'
+                }
+              </p>
             </div>
           ) : (
-            sortedTransactions.map((transaction) => (
+            filteredTransactions.map((transaction) => (
               <Card key={transaction.id} className="p-4 animate-fade-in">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
@@ -101,6 +135,9 @@ export default function Transactions() {
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {getPaymentMethodName(transaction.metodoPago)}
+                        {transaction.mesesPagados > 1 && (
+                          <span className="ml-1">• {transaction.mesesPagados} meses</span>
+                        )}
                       </p>
                       <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
@@ -111,6 +148,12 @@ export default function Transactions() {
                           Ref: {transaction.referencia}
                         </p>
                       )}
+                      {transaction.observaciones && (
+                        <div className="flex items-start gap-1 mt-2 p-2 bg-muted/50 rounded text-xs text-muted-foreground">
+                          <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                          <span>{transaction.observaciones}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">
@@ -118,7 +161,7 @@ export default function Transactions() {
                       +{formatCurrency(transaction.monto)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {transaction.registradoPor.split(':')[1]}
+                      {transaction.registradoPorNombre || transaction.registradoPor?.split(':')[1]}
                     </p>
                   </div>
                 </div>

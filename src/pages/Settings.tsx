@@ -34,6 +34,7 @@ import { COUNTRIES, DEFAULT_PAYMENT_METHODS } from '@/data/countries';
 import { PaymentMethod } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { LogoUpload } from '@/components/settings/LogoUpload';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'banknote': Banknote,
@@ -44,12 +45,18 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export default function Settings() {
-  const { establecimiento, setupEstablecimiento, updatePaymentMethods } = useApp();
+  const { establecimiento, setupEstablecimiento, updatePaymentMethods, updateEstablecimientoLogo } = useApp();
   const { toast } = useToast();
   
   const [addMethodOpen, setAddMethodOpen] = useState(false);
   const [newMethodName, setNewMethodName] = useState('');
   const [newMethodIcon, setNewMethodIcon] = useState('wallet');
+
+  const handleLogoChange = (logoUrl: string | null) => {
+    if (updateEstablecimientoLogo) {
+      updateEstablecimientoLogo(logoUrl);
+    }
+  };
 
   const handleCountryChange = (countryCode: string) => {
     const country = COUNTRIES.find(c => c.code === countryCode);
@@ -145,6 +152,13 @@ export default function Settings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Logo Upload */}
+        <LogoUpload
+          currentLogoUrl={establecimiento?.logoUrl}
+          onLogoChange={handleLogoChange}
+          establecimientoId={establecimiento?.id}
+        />
 
         {/* Country & Currency */}
         <Card>

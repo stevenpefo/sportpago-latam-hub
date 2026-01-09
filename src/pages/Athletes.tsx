@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
+import { BulkPriceModal } from '@/components/athletes/BulkPriceModal';
 import { useApp } from '@/context/AppContext';
 import { Athlete, AthleteCategory } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Plus, Search, Users, CalendarIcon } from 'lucide-react';
+import { Plus, Search, Users, CalendarIcon, DollarSign } from 'lucide-react';
 import { SPORTS, ATHLETE_CATEGORIES } from '@/data/countries';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -39,6 +40,7 @@ export default function Athletes() {
     establecimiento, 
     userRole,
     addAthlete,
+    updateAthletePrices,
     registerPayment,
     markAsPending,
     markAsInactive,
@@ -48,6 +50,7 @@ export default function Athletes() {
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [bulkPriceModalOpen, setBulkPriceModalOpen] = useState(false);
 
   // New athlete form state with new fields
   const [newAthlete, setNewAthlete] = useState({
@@ -82,6 +85,10 @@ export default function Athletes() {
     if (selectedAthlete) {
       registerPayment(selectedAthlete.id, metodoPago, mesesPagados, montoPersonalizado, referencia, observaciones);
     }
+  };
+
+  const handleBulkPriceUpdate = (athleteIds: string[], newPrice: number) => {
+    updateAthletePrices(athleteIds, newPrice);
   };
 
   const handleAddAthlete = () => {
@@ -138,14 +145,27 @@ export default function Athletes() {
             <p className="text-sm text-muted-foreground">{athletes.length} registrados</p>
           </div>
           
-          {canAddAthletes && (
-            <Dialog open={addModalOpen} onOpenChange={setAddModalOpen}>
-              <DialogTrigger asChild>
-                <Button className="gradient-primary">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Agregar
-                </Button>
-              </DialogTrigger>
+          <div className="flex items-center gap-2">
+            {/* Bulk Price Button - Admin Only */}
+            {isAdmin && athletes.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setBulkPriceModalOpen(true)}
+              >
+                <DollarSign className="h-4 w-4 mr-1" />
+                Modificar Precios
+              </Button>
+            )}
+            
+            {canAddAthletes && (
+              <Dialog open={addModalOpen} onOpenChange={setAddModalOpen}>
+                <DialogTrigger asChild>
+                  <Button className="gradient-primary">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Agregar
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Nuevo Deportista</DialogTitle>
@@ -322,6 +342,7 @@ export default function Athletes() {
               </DialogContent>
             </Dialog>
           )}
+          </div>
         </div>
 
         {/* Search */}
@@ -374,6 +395,14 @@ export default function Athletes() {
         paymentMethods={establecimiento?.metodosPago || []}
         currencySymbol={currencySymbol}
         onConfirm={handleConfirmPayment}
+      />
+
+      <BulkPriceModal
+        open={bulkPriceModalOpen}
+        onOpenChange={setBulkPriceModalOpen}
+        athletes={athletes}
+        currencySymbol={currencySymbol}
+        onConfirm={handleBulkPriceUpdate}
       />
     </AppLayout>
   );
