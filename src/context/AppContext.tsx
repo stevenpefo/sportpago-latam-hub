@@ -8,8 +8,10 @@ interface AppContextType extends AppState {
   loginStaff: (codigo: string) => Promise<boolean>;
   logout: () => void;
   setupEstablecimiento: (data: Partial<Establecimiento>) => void;
+  updateEstablecimientoLogo: (logoUrl: string | null) => void;
   addAthlete: (athlete: Omit<Athlete, 'id' | 'estadoSistema'>) => void;
   updateAthlete: (id: string, data: Partial<Athlete>) => void;
+  updateAthletePrices: (athleteIds: string[], newPrice: number) => void;
   deleteAthlete: (id: string) => void;
   addStaff: (staff: Omit<StaffUser, 'id' | 'codigoAcceso' | 'fechaInvitacion'>) => void;
   updateStaff: (id: string, data: Partial<StaffUser>) => void;
@@ -211,6 +213,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   }, []);
 
+  const updateEstablecimientoLogo = useCallback((logoUrl: string | null) => {
+    setState(prev => ({
+      ...prev,
+      establecimiento: prev.establecimiento 
+        ? { ...prev.establecimiento, logoUrl: logoUrl || undefined }
+        : null,
+    }));
+  }, []);
+
   const addAthlete = useCallback((athlete: Omit<Athlete, 'id' | 'estadoSistema'>) => {
     const newAthlete: Athlete = {
       ...athlete,
@@ -235,6 +246,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 ? calculateSystemStatus(data.proximoPago) 
                 : a.estadoSistema
             } 
+          : a
+      ),
+    }));
+  }, []);
+
+  const updateAthletePrices = useCallback((athleteIds: string[], newPrice: number) => {
+    setState(prev => ({
+      ...prev,
+      athletes: prev.athletes.map(a => 
+        athleteIds.includes(a.id) 
+          ? { ...a, montoMensual: newPrice } 
           : a
       ),
     }));
@@ -359,8 +381,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       loginStaff,
       logout,
       setupEstablecimiento,
+      updateEstablecimientoLogo,
       addAthlete,
       updateAthlete,
+      updateAthletePrices,
       deleteAthlete,
       addStaff,
       updateStaff,

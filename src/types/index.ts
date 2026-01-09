@@ -30,6 +30,7 @@ export interface Establecimiento {
   zonaHoraria: string;
   metodosPago: PaymentMethod[];
   configuracionCompleta: boolean;
+  logoUrl?: string;
 }
 
 export interface AdminUser {
