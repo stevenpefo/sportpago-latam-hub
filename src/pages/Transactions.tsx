@@ -2,15 +2,28 @@ import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useApp } from '@/context/AppContext';
 import { Card } from '@/components/ui/card';
-import { Receipt, TrendingUp, Calendar, Banknote, FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Receipt, TrendingUp, Calendar, Banknote, FileText, Download } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { PaymentMethodFilter } from '@/components/transactions/PaymentMethodFilter';
+import { DateRangeFilter } from '@/components/transactions/DateRangeFilter';
+import { AthleteDetailModal } from '@/components/athletes/AthleteDetailModal';
+import { exportTransactionsToExcel } from '@/utils/exportToExcel';
+import { DateRange } from 'react-day-picker';
+import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { Athlete } from '@/types';
 
 export default function Transactions() {
   const { transactions, athletes, establecimiento } = useApp();
   const currencySymbol = establecimiento?.simboloMoneda || '$';
 
   const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
+  });
+  const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
 
   const formatCurrency = (amount: number) => {
     return `${currencySymbol}${amount.toLocaleString()}`;
@@ -26,31 +39,20 @@ export default function Transactions() {
     });
   };
 
-  const stats = useMemo(() => {
-    const thisMonth = new Date().getMonth();
-    const thisMonthTransactions = transactions.filter(
-      t => new Date(t.fecha).getMonth() === thisMonth
-    );
-    const totalThisMonth = thisMonthTransactions.reduce((sum, t) => sum + t.monto, 0);
-    
-    return {
-      total: transactions.length,
-      thisMonth: thisMonthTransactions.length,
-      amountThisMonth: totalThisMonth,
-    };
-  }, [transactions]);
-
-  const getAthleteName = (athleteId: string) => {
-    return athletes.find(a => a.id === athleteId)?.nombre || 'Deportista';
-  };
-
-  const getPaymentMethodName = (methodId: string) => {
-    return establecimiento?.metodosPago.find(m => m.id === methodId)?.nombre || methodId;
-  };
-
   // Filter and sort transactions
   const filteredTransactions = useMemo(() => {
     let result = [...transactions];
+
+    // Apply date range filter
+    if (dateRange?.from) {
+      result = result.filter(t => {
+        const txDate = new Date(t.fecha);
+        if (dateRange.to) {
+          return isWithinInterval(txDate, { start: dateRange.from!, end: dateRange.to });
+        }
+        return txDate >= dateRange.from!;
+      });
+    }
 
     // Apply payment method filter
     if (selectedMethods.length > 0) {
@@ -61,36 +63,91 @@ export default function Transactions() {
     return result.sort(
       (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
     );
-  }, [transactions, selectedMethods]);
+  }, [transactions, selectedMethods, dateRange]);
+
+  const stats = useMemo(() => {
+    const totalFiltered = filteredTransactions.reduce((sum, t) => sum + t.monto, 0);
+    
+    return {
+      total: filteredTransactions.length,
+      amount: totalFiltered,
+    };
+  }, [filteredTransactions]);
+
+  const getAthlete = (athleteId: string) => {
+    return athletes.find(a => a.id === athleteId);
+  };
+
+  const getAthleteName = (athleteId: string) => {
+    return getAthlete(athleteId)?.nombre || 'Deportista';
+  };
+
+  const getPaymentMethodName = (methodId: string) => {
+    return establecimiento?.metodosPago.find(m => m.id === methodId)?.nombre || methodId;
+  };
+
+  const handleAthleteClick = (athleteId: string) => {
+    const athlete = getAthlete(athleteId);
+    if (athlete) {
+      setSelectedAthlete(athlete);
+      setDetailModalOpen(true);
+    }
+  };
+
+  const handleExport = () => {
+    if (!establecimiento) return;
+    exportTransactionsToExcel({
+      transactions: filteredTransactions,
+      athletes,
+      currencySymbol,
+      establishmentName: establecimiento.nombre,
+    });
+  };
 
   return (
     <AppLayout>
       <div className="p-4 space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Pagos</h1>
-          <p className="text-sm text-muted-foreground">
-            Historial de transacciones
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Pagos</h1>
+            <p className="text-sm text-muted-foreground">
+              Historial de transacciones
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleExport}
+            disabled={filteredTransactions.length === 0}
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Exportar
+          </Button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           <StatsCard
-            title="Este mes"
-            value={formatCurrency(stats.amountThisMonth)}
+            title="Total filtrado"
+            value={formatCurrency(stats.amount)}
             icon={<TrendingUp className="h-5 w-5" />}
             variant="success"
           />
           <StatsCard
             title="Transacciones"
-            value={stats.thisMonth}
+            value={stats.total}
             icon={<Receipt className="h-5 w-5" />}
           />
         </div>
 
         {/* Filters */}
         <div className="flex flex-wrap gap-2">
+          <DateRangeFilter
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
+          />
           <PaymentMethodFilter
             paymentMethods={establecimiento?.metodosPago || []}
             selectedMethods={selectedMethods}
@@ -102,20 +159,18 @@ export default function Transactions() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-foreground">
-              Últimas transacciones
+              Transacciones
             </h2>
-            {selectedMethods.length > 0 && (
-              <span className="text-sm text-muted-foreground">
-                {filteredTransactions.length} resultado(s)
-              </span>
-            )}
+            <span className="text-sm text-muted-foreground">
+              {filteredTransactions.length} resultado(s)
+            </span>
           </div>
 
           {filteredTransactions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Receipt className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p>
-                {selectedMethods.length > 0 
+                {selectedMethods.length > 0 || dateRange?.from
                   ? 'No hay transacciones con los filtros seleccionados'
                   : 'No hay transacciones registradas'
                 }
@@ -130,9 +185,12 @@ export default function Transactions() {
                       <Banknote className="h-5 w-5 text-status-success" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">
+                      <button
+                        onClick={() => handleAthleteClick(transaction.athleteId)}
+                        className="font-semibold text-foreground hover:text-primary hover:underline text-left"
+                      >
                         {getAthleteName(transaction.athleteId)}
-                      </p>
+                      </button>
                       <p className="text-sm text-muted-foreground">
                         {getPaymentMethodName(transaction.metodoPago)}
                         {transaction.mesesPagados > 1 && (
@@ -170,6 +228,15 @@ export default function Transactions() {
           )}
         </div>
       </div>
+
+      {/* Athlete Detail Modal */}
+      <AthleteDetailModal
+        open={detailModalOpen}
+        onOpenChange={setDetailModalOpen}
+        athlete={selectedAthlete}
+        transactions={transactions}
+        currencySymbol={currencySymbol}
+      />
     </AppLayout>
   );
 }
