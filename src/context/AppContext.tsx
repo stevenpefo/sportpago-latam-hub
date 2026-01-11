@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { AppState, AdminUser, StaffUser, Establecimiento, Athlete, Transaction, UserRole, PaymentMethod, AthleteCategory } from '@/types';
+import { AppState, AdminUser, StaffUser, Establecimiento, Athlete, Transaction, UserRole, PaymentMethod, AthleteCategory, StaffAthleteAssignment } from '@/types';
 import { DEFAULT_PAYMENT_METHODS } from '@/data/countries';
 import { addDays } from 'date-fns';
 
@@ -27,6 +27,8 @@ interface AppContextType extends AppState {
   updatePaymentMethods: (methods: PaymentMethod[]) => void;
   markAsPending: (athleteId: string) => void;
   markAsInactive: (athleteId: string) => void;
+  updateStaffAssignments: (staffId: string, athleteIds: string[]) => void;
+  getStaffAssignments: (staffId: string) => string[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -123,6 +125,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     athletes: [],
     staff: [],
     transactions: [],
+    staffAssignments: [],
     isAuthenticated: false,
     userRole: null,
   });
@@ -199,6 +202,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       athletes: [],
       staff: [],
       transactions: [],
+      staffAssignments: [],
       isAuthenticated: false,
       userRole: null,
     });
@@ -374,6 +378,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   }, []);
 
+  const updateStaffAssignments = useCallback((staffId: string, athleteIds: string[]) => {
+    setState(prev => {
+      // Remove old assignments for this staff
+      const otherAssignments = prev.staffAssignments.filter(a => a.staffId !== staffId);
+      // Add new assignments
+      const newAssignments = athleteIds.map(athleteId => ({ staffId, athleteId }));
+      return {
+        ...prev,
+        staffAssignments: [...otherAssignments, ...newAssignments],
+      };
+    });
+  }, []);
+
+  const getStaffAssignments = useCallback((staffId: string): string[] => {
+    return state.staffAssignments
+      .filter(a => a.staffId === staffId)
+      .map(a => a.athleteId);
+  }, [state.staffAssignments]);
+
   return (
     <AppContext.Provider value={{
       ...state,
@@ -393,6 +416,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updatePaymentMethods,
       markAsPending,
       markAsInactive,
+      updateStaffAssignments,
+      getStaffAssignments,
     }}>
       {children}
     </AppContext.Provider>

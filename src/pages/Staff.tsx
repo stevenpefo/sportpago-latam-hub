@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -24,16 +25,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Users, Copy, Trash2, KeyRound } from 'lucide-react';
+import { Plus, Users, Copy, Trash2, KeyRound, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { StaffAssignmentModal } from '@/components/staff/StaffAssignmentModal';
+import { StaffUser } from '@/types';
 
 export default function Staff() {
-  const { staff, establecimiento, addStaff, updateStaff, deleteStaff } = useApp();
+  const { staff, athletes, establecimiento, staffAssignments, addStaff, updateStaff, deleteStaff, updateStaffAssignments } = useApp();
   const { toast } = useToast();
   
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [newStaffName, setNewStaffName] = useState('');
+  const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState<StaffUser | null>(null);
 
   const handleAddStaff = () => {
     if (!newStaffName.trim()) return;
@@ -75,6 +80,23 @@ export default function Staff() {
     toast({
       title: 'Asistente eliminado',
     });
+  };
+
+  const handleOpenAssignments = (member: StaffUser) => {
+    setSelectedStaff(member);
+    setAssignmentModalOpen(true);
+  };
+
+  const handleAssignmentsChange = (staffId: string, athleteIds: string[]) => {
+    updateStaffAssignments(staffId, athleteIds);
+    toast({
+      title: 'Asignaciones actualizadas',
+      description: `${athleteIds.length} deportista(s) asignado(s)`,
+    });
+  };
+
+  const getAssignedCount = (staffId: string) => {
+    return staffAssignments.filter(a => a.staffId === staffId).length;
   };
 
   return (
@@ -166,6 +188,8 @@ export default function Staff() {
                 .toUpperCase()
                 .slice(0, 2);
 
+              const assignedCount = getAssignedCount(member.id);
+
               return (
                 <Card key={member.id} className="p-4 animate-fade-in">
                   <div className="flex items-start gap-3">
@@ -177,9 +201,16 @@ export default function Staff() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-foreground">
-                          {member.nombre}
-                        </h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-foreground">
+                            {member.nombre}
+                          </h3>
+                          {assignedCount > 0 && (
+                            <Badge variant="secondary" className="text-xs">
+                              {assignedCount} deportista{assignedCount !== 1 ? 's' : ''}
+                            </Badge>
+                          )}
+                        </div>
                         <Switch
                           checked={member.activo}
                           onCheckedChange={(checked) => handleToggleActive(member.id, checked)}
@@ -207,6 +238,15 @@ export default function Staff() {
 
                       {/* Actions */}
                       <div className="flex items-center gap-2 mt-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleOpenAssignments(member)}
+                        >
+                          <UserPlus className="h-4 w-4 mr-1" />
+                          Asignar deportistas
+                        </Button>
+                        
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="outline" size="sm" className="text-destructive">
@@ -241,6 +281,18 @@ export default function Staff() {
           )}
         </div>
       </div>
+
+      {/* Staff Assignment Modal */}
+      {selectedStaff && (
+        <StaffAssignmentModal
+          open={assignmentModalOpen}
+          onOpenChange={setAssignmentModalOpen}
+          staff={selectedStaff}
+          athletes={athletes}
+          assignments={staffAssignments}
+          onAssignmentsChange={handleAssignmentsChange}
+        />
+      )}
     </AppLayout>
   );
 }

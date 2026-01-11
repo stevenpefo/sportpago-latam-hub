@@ -95,12 +95,18 @@ export interface Transaction {
   comprobanteUrl?: string;
 }
 
+export interface StaffAthleteAssignment {
+  staffId: string;
+  athleteId: string;
+}
+
 export interface AppState {
   currentUser: AdminUser | StaffUser | null;
   establecimiento: Establecimiento | null;
   athletes: Athlete[];
   staff: StaffUser[];
   transactions: Transaction[];
+  staffAssignments: StaffAthleteAssignment[];
   isAuthenticated: boolean;
   userRole: UserRole | null;
 }
