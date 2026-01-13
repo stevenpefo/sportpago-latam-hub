@@ -29,6 +29,8 @@ interface AppContextType extends AppState {
   markAsInactive: (athleteId: string) => void;
   updateStaffAssignments: (staffId: string, athleteIds: string[]) => void;
   getStaffAssignments: (staffId: string) => string[];
+  customCategories: string[];
+  addCustomCategory: (category: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -129,6 +131,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     isAuthenticated: false,
     userRole: null,
   });
+
+  // Custom categories for the establishment
+  const [customCategories, setCustomCategories] = useState<string[]>([
+    'Principiante',
+    'Intermedio', 
+    'Avanzado',
+    'Profesional',
+    'Infantil',
+    'Juvenil',
+    'Adulto',
+  ]);
+
+  const addCustomCategory = useCallback((category: string) => {
+    const trimmed = category.trim();
+    if (trimmed && !customCategories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
+      setCustomCategories(prev => [...prev, trimmed]);
+    }
+  }, [customCategories]);
 
   const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     // Demo login - in production, this would call Supabase auth
@@ -430,6 +450,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       markAsInactive,
       updateStaffAssignments,
       getStaffAssignments,
+      customCategories,
+      addCustomCategory,
     }}>
       {children}
     </AppContext.Provider>
