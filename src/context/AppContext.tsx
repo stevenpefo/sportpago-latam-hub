@@ -182,14 +182,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         configuracionCompleta: true,
       };
 
-      setState(prev => ({
-        ...prev,
-        currentUser: staffMember,
-        establecimiento,
-        athletes: mockAthletes,
-        isAuthenticated: true,
-        userRole: 'staff',
-      }));
+      setState(prev => {
+        // Get assigned athlete IDs for this staff member
+        const assignedAthleteIds = prev.staffAssignments
+          .filter(a => a.staffId === staffMember.id)
+          .map(a => a.athleteId);
+        
+        // Filter athletes to only show assigned ones (if there are assignments)
+        const filteredAthletes = assignedAthleteIds.length > 0
+          ? mockAthletes.filter(a => assignedAthleteIds.includes(a.id))
+          : []; // If no assignments, staff sees no athletes
+
+        return {
+          ...prev,
+          currentUser: staffMember,
+          establecimiento,
+          athletes: filteredAthletes,
+          isAuthenticated: true,
+          userRole: 'staff',
+        };
+      });
       return true;
     }
     return false;
