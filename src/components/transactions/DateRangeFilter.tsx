@@ -131,7 +131,6 @@ export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilte
             selected={dateRange}
             onSelect={handleCalendarSelect}
             numberOfMonths={1}
-            locale={es}
             className={cn("p-3 pointer-events-auto")}
           />
         )}
