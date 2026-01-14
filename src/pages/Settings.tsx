@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -29,8 +30,9 @@ import {
   Banknote,
   Wallet,
   Smartphone,
+  Dumbbell,
 } from 'lucide-react';
-import { COUNTRIES, DEFAULT_PAYMENT_METHODS } from '@/data/countries';
+import { COUNTRIES, DEFAULT_PAYMENT_METHODS, SPORTS } from '@/data/countries';
 import { PaymentMethod } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -45,12 +47,39 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export default function Settings() {
-  const { establecimiento, setupEstablecimiento, updatePaymentMethods, updateEstablecimientoLogo } = useApp();
+  const { 
+    establecimiento, 
+    setupEstablecimiento, 
+    updatePaymentMethods, 
+    updateEstablecimientoLogo,
+    enabledSports,
+    updateEnabledSports,
+  } = useApp();
   const { toast } = useToast();
   
   const [addMethodOpen, setAddMethodOpen] = useState(false);
   const [newMethodName, setNewMethodName] = useState('');
   const [newMethodIcon, setNewMethodIcon] = useState('wallet');
+
+  const handleToggleSport = (sport: string, checked: boolean) => {
+    if (checked) {
+      updateEnabledSports([...enabledSports, sport]);
+    } else {
+      updateEnabledSports(enabledSports.filter(s => s !== sport));
+    }
+    toast({
+      title: checked ? 'Deporte activado' : 'Deporte desactivado',
+      description: sport,
+    });
+  };
+
+  const handleSelectAllSports = () => {
+    if (enabledSports.length === SPORTS.length) {
+      updateEnabledSports([]);
+    } else {
+      updateEnabledSports([...SPORTS]);
+    }
+  };
 
   const handleLogoChange = (logoUrl: string | null) => {
     if (updateEstablecimientoLogo) {
@@ -201,6 +230,65 @@ export default function Settings() {
                   {currentCountry.currencySymbol} ({currentCountry.currency})
                 </p>
               </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Academy Sports */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Dumbbell className="h-5 w-5 text-primary" />
+                  Deportes de mi Academia
+                </CardTitle>
+                <CardDescription>
+                  Selecciona los deportes que ofrece tu academia
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAllSports}
+                className="min-h-[44px]"
+              >
+                {enabledSports.length === SPORTS.length ? 'Quitar todos' : 'Seleccionar todos'}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {SPORTS.map((sport) => {
+                const isEnabled = enabledSports.includes(sport);
+                return (
+                  <label
+                    key={sport}
+                    className={cn(
+                      'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all min-h-[44px]',
+                      isEnabled 
+                        ? 'border-primary bg-primary/5' 
+                        : 'border-border hover:border-primary/50'
+                    )}
+                  >
+                    <Checkbox
+                      checked={isEnabled}
+                      onCheckedChange={(checked) => handleToggleSport(sport, checked as boolean)}
+                    />
+                    <span className={cn(
+                      'text-sm',
+                      isEnabled ? 'font-medium text-foreground' : 'text-muted-foreground'
+                    )}>
+                      {sport}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            {enabledSports.length === 0 && (
+              <p className="text-xs text-muted-foreground mt-3 text-center">
+                💡 Si no seleccionas ninguno, se mostrarán todos los deportes
+              </p>
             )}
           </CardContent>
         </Card>

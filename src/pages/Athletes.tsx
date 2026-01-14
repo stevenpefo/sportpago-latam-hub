@@ -28,7 +28,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { CategoryInput } from '@/components/ui/CategoryInput';
-import { Plus, Search, Users, CalendarIcon, DollarSign } from 'lucide-react';
+import { Plus, Search, Users, CalendarIcon, DollarSign, Dumbbell } from 'lucide-react';
 import { SPORTS } from '@/data/countries';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -46,7 +46,11 @@ export default function Athletes() {
     markAsInactive,
     customCategories,
     addCustomCategory,
+    enabledSports,
   } = useApp();
+
+  // Get available sports: if none enabled, show all (backward compatibility)
+  const availableSports = enabledSports.length > 0 ? enabledSports : SPORTS;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
@@ -100,9 +104,12 @@ export default function Athletes() {
       proximoPago.setMonth(proximoPago.getMonth() + 1);
     }
 
-    const deporteFinal = newAthlete.deporte === 'Otros' 
+    // If only one sport available, use it automatically
+    const selectedSport = availableSports.length === 1 ? availableSports[0] : newAthlete.deporte;
+    
+    const deporteFinal = selectedSport === 'Otros' 
       ? newAthlete.deportePersonalizado || 'Otros'
-      : newAthlete.deporte;
+      : selectedSport;
 
     // Save custom category if it's new
     if (newAthlete.categoria.trim()) {
@@ -240,24 +247,34 @@ export default function Athletes() {
               />
             </div>
 
-            {/* Sport Dropdown */}
+            {/* Sport - Auto-select if only one, dropdown if multiple */}
             <div className="space-y-2">
               <Label htmlFor="deporte">Deporte</Label>
-              <Select
-                value={newAthlete.deporte}
-                onValueChange={(value) => setNewAthlete({ ...newAthlete, deporte: value, deportePersonalizado: '' })}
-              >
-                <SelectTrigger className="min-h-[44px]">
-                  <SelectValue placeholder="Seleccionar deporte" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SPORTS.map((sport) => (
-                    <SelectItem key={sport} value={sport} className="min-h-[44px]">
-                      {sport}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {availableSports.length === 1 ? (
+                // Auto-complete: only one sport available
+                <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50 min-h-[44px]">
+                  <Dumbbell className="h-4 w-4 text-primary" />
+                  <span className="font-medium">{availableSports[0]}</span>
+                  <input type="hidden" value={availableSports[0]} />
+                </div>
+              ) : (
+                // Dropdown for multiple sports
+                <Select
+                  value={newAthlete.deporte}
+                  onValueChange={(value) => setNewAthlete({ ...newAthlete, deporte: value, deportePersonalizado: '' })}
+                >
+                  <SelectTrigger className="min-h-[44px]">
+                    <SelectValue placeholder="Seleccionar deporte" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableSports.map((sport) => (
+                      <SelectItem key={sport} value={sport} className="min-h-[44px]">
+                        {sport}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
 
             {/* Custom Sport Input - only shows when "Otros" is selected */}
@@ -388,7 +405,7 @@ export default function Athletes() {
             <Button
               className="flex-1 gradient-primary min-h-[44px]"
               onClick={handleAddAthlete}
-              disabled={!newAthlete.nombre || !newAthlete.deporte || !newAthlete.montoMensual || (newAthlete.deporte === 'Otros' && !newAthlete.deportePersonalizado)}
+              disabled={!newAthlete.nombre || (availableSports.length > 1 && !newAthlete.deporte) || !newAthlete.montoMensual || (newAthlete.deporte === 'Otros' && !newAthlete.deportePersonalizado)}
             >
               Guardar
             </Button>

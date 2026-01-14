@@ -31,6 +31,8 @@ interface AppContextType extends AppState {
   getStaffAssignments: (staffId: string) => string[];
   customCategories: string[];
   addCustomCategory: (category: string) => void;
+  enabledSports: string[];
+  updateEnabledSports: (sports: string[]) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -143,12 +145,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     'Adulto',
   ]);
 
+  // Enabled sports for the establishment (empty = all sports available for backward compatibility)
+  const [enabledSports, setEnabledSports] = useState<string[]>([]);
+
   const addCustomCategory = useCallback((category: string) => {
     const trimmed = category.trim();
     if (trimmed && !customCategories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
       setCustomCategories(prev => [...prev, trimmed]);
     }
   }, [customCategories]);
+
+  const updateEnabledSports = useCallback((sports: string[]) => {
+    setEnabledSports(sports);
+  }, []);
 
   const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     // Demo login - in production, this would call Supabase auth
@@ -452,6 +461,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       getStaffAssignments,
       customCategories,
       addCustomCategory,
+      enabledSports,
+      updateEnabledSports,
     }}>
       {children}
     </AppContext.Provider>
