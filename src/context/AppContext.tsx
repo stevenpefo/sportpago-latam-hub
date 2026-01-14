@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { AppState, AdminUser, StaffUser, Establecimiento, Athlete, Transaction, UserRole, PaymentMethod, AthleteCategory, StaffAthleteAssignment } from '@/types';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { AppState, AdminUser, StaffUser, Establecimiento, Athlete, Transaction, UserRole, PaymentMethod, StaffAthleteAssignment } from '@/types';
 import { DEFAULT_PAYMENT_METHODS } from '@/data/countries';
 import { addDays } from 'date-fns';
 
