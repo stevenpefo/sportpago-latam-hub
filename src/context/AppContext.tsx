@@ -33,6 +33,9 @@ interface AppContextType extends AppState {
   addCustomCategory: (category: string) => void;
   enabledSports: string[];
   updateEnabledSports: (sports: string[]) => void;
+  customSports: string[];
+  addCustomSport: (sport: string) => void;
+  deleteCustomSport: (sport: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -148,6 +151,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Enabled sports for the establishment (empty = all sports available for backward compatibility)
   const [enabledSports, setEnabledSports] = useState<string[]>([]);
 
+  // Custom sports created by the establishment
+  const [customSports, setCustomSports] = useState<string[]>([]);
+
   const addCustomCategory = useCallback((category: string) => {
     const trimmed = category.trim();
     if (trimmed && !customCategories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
@@ -157,6 +163,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateEnabledSports = useCallback((sports: string[]) => {
     setEnabledSports(sports);
+  }, []);
+
+  const addCustomSport = useCallback((sport: string) => {
+    const trimmed = sport.trim();
+    if (trimmed && !customSports.some(s => s.toLowerCase() === trimmed.toLowerCase())) {
+      setCustomSports(prev => [...prev, trimmed]);
+      // Auto-enable the new custom sport
+      setEnabledSports(prev => [...prev, trimmed]);
+    }
+  }, [customSports]);
+
+  const deleteCustomSport = useCallback((sport: string) => {
+    setCustomSports(prev => prev.filter(s => s !== sport));
+    setEnabledSports(prev => prev.filter(s => s !== sport));
   }, []);
 
   const login = useCallback(async (email: string, password: string): Promise<boolean> => {
@@ -463,6 +483,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addCustomCategory,
       enabledSports,
       updateEnabledSports,
+      customSports,
+      addCustomSport,
+      deleteCustomSport,
     }}>
       {children}
     </AppContext.Provider>

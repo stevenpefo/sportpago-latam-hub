@@ -54,12 +54,20 @@ export default function Settings() {
     updateEstablecimientoLogo,
     enabledSports,
     updateEnabledSports,
+    customSports,
+    addCustomSport,
+    deleteCustomSport,
   } = useApp();
   const { toast } = useToast();
   
   const [addMethodOpen, setAddMethodOpen] = useState(false);
   const [newMethodName, setNewMethodName] = useState('');
   const [newMethodIcon, setNewMethodIcon] = useState('wallet');
+  const [addSportOpen, setAddSportOpen] = useState(false);
+  const [newSportName, setNewSportName] = useState('');
+
+  // All available sports (predefined + custom)
+  const allSports = [...SPORTS.filter(s => s !== 'Otros'), ...customSports];
 
   const handleToggleSport = (sport: string, checked: boolean) => {
     if (checked) {
@@ -74,11 +82,41 @@ export default function Settings() {
   };
 
   const handleSelectAllSports = () => {
-    if (enabledSports.length === SPORTS.length) {
+    if (enabledSports.length === allSports.length) {
       updateEnabledSports([]);
     } else {
-      updateEnabledSports([...SPORTS]);
+      updateEnabledSports([...allSports]);
     }
+  };
+
+  const handleAddCustomSport = () => {
+    if (!newSportName.trim()) return;
+    
+    // Check if sport already exists
+    if (allSports.some(s => s.toLowerCase() === newSportName.trim().toLowerCase())) {
+      toast({
+        title: 'Deporte ya existe',
+        description: 'Este deporte ya está en la lista',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    addCustomSport(newSportName.trim());
+    toast({
+      title: 'Deporte agregado',
+      description: `${newSportName} ahora está disponible`,
+    });
+    setNewSportName('');
+    setAddSportOpen(false);
+  };
+
+  const handleDeleteCustomSport = (sport: string) => {
+    deleteCustomSport(sport);
+    toast({
+      title: 'Deporte eliminado',
+      description: sport,
+    });
   };
 
   const handleLogoChange = (logoUrl: string | null) => {
@@ -237,54 +275,147 @@ export default function Settings() {
         {/* Academy Sports */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Dumbbell className="h-5 w-5 text-primary" />
                   Deportes de mi Academia
                 </CardTitle>
                 <CardDescription>
-                  Selecciona los deportes que ofrece tu academia
+                  Selecciona o crea los deportes que ofrece tu academia
                 </CardDescription>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSelectAllSports}
-                className="min-h-[44px]"
-              >
-                {enabledSports.length === SPORTS.length ? 'Quitar todos' : 'Seleccionar todos'}
-              </Button>
+              <div className="flex items-center gap-2 shrink-0">
+                <Dialog open={addSportOpen} onOpenChange={setAddSportOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outline" className="min-h-[44px]">
+                      <Plus className="h-4 w-4 mr-1" />
+                      <span className="hidden sm:inline">Crear</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[400px] mx-4">
+                    <DialogHeader>
+                      <DialogTitle>Nuevo Deporte</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label>Nombre del deporte</Label>
+                        <Input
+                          placeholder="Ej: Patinaje, Escalada, Parkour..."
+                          value={newSportName}
+                          onChange={(e) => setNewSportName(e.target.value)}
+                          className="min-h-[44px]"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        variant="outline"
+                        className="flex-1 min-h-[44px]"
+                        onClick={() => setAddSportOpen(false)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        className="flex-1 gradient-primary min-h-[44px]"
+                        onClick={handleAddCustomSport}
+                        disabled={!newSportName.trim()}
+                      >
+                        Agregar
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSelectAllSports}
+                  className="min-h-[44px] hidden sm:flex"
+                >
+                  {enabledSports.length === allSports.length ? 'Quitar todos' : 'Todos'}
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {SPORTS.map((sport) => {
-                const isEnabled = enabledSports.includes(sport);
-                return (
-                  <label
-                    key={sport}
-                    className={cn(
-                      'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all min-h-[44px]',
-                      isEnabled 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-border hover:border-primary/50'
-                    )}
-                  >
-                    <Checkbox
-                      checked={isEnabled}
-                      onCheckedChange={(checked) => handleToggleSport(sport, checked as boolean)}
-                    />
-                    <span className={cn(
-                      'text-sm',
-                      isEnabled ? 'font-medium text-foreground' : 'text-muted-foreground'
-                    )}>
-                      {sport}
-                    </span>
-                  </label>
-                );
-              })}
+            {/* Custom Sports Section */}
+            {customSports.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-medium text-muted-foreground mb-2">Deportes personalizados</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {customSports.map((sport) => {
+                    const isEnabled = enabledSports.includes(sport);
+                    return (
+                      <div
+                        key={sport}
+                        className={cn(
+                          'flex items-center justify-between gap-2 p-3 rounded-lg border transition-all min-h-[44px]',
+                          isEnabled 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border'
+                        )}
+                      >
+                        <label className="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
+                          <Checkbox
+                            checked={isEnabled}
+                            onCheckedChange={(checked) => handleToggleSport(sport, checked as boolean)}
+                          />
+                          <span className={cn(
+                            'text-sm truncate',
+                            isEnabled ? 'font-medium text-foreground' : 'text-muted-foreground'
+                          )}>
+                            {sport}
+                          </span>
+                        </label>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive shrink-0"
+                          onClick={() => handleDeleteCustomSport(sport)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Predefined Sports */}
+            <div>
+              {customSports.length > 0 && (
+                <p className="text-xs font-medium text-muted-foreground mb-2">Deportes predefinidos</p>
+              )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {SPORTS.filter(s => s !== 'Otros').map((sport) => {
+                  const isEnabled = enabledSports.includes(sport);
+                  return (
+                    <label
+                      key={sport}
+                      className={cn(
+                        'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all min-h-[44px]',
+                        isEnabled 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border hover:border-primary/50'
+                      )}
+                    >
+                      <Checkbox
+                        checked={isEnabled}
+                        onCheckedChange={(checked) => handleToggleSport(sport, checked as boolean)}
+                      />
+                      <span className={cn(
+                        'text-sm',
+                        isEnabled ? 'font-medium text-foreground' : 'text-muted-foreground'
+                      )}>
+                        {sport}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
+            
             {enabledSports.length === 0 && (
               <p className="text-xs text-muted-foreground mt-3 text-center">
                 💡 Si no seleccionas ninguno, se mostrarán todos los deportes

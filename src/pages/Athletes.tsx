@@ -47,10 +47,12 @@ export default function Athletes() {
     customCategories,
     addCustomCategory,
     enabledSports,
+    customSports,
   } = useApp();
 
-  // Get available sports: if none enabled, show all (backward compatibility)
-  const availableSports = enabledSports.length > 0 ? enabledSports : SPORTS;
+  // Get available sports: combine predefined (minus "Otros") + custom, then filter by enabled
+  const allSports = [...SPORTS.filter(s => s !== 'Otros'), ...customSports];
+  const availableSports = enabledSports.length > 0 ? enabledSports : allSports;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
