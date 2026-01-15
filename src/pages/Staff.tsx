@@ -25,7 +25,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Users, Copy, Trash2, KeyRound, UserPlus } from 'lucide-react';
+import { Plus, Users, Copy, Trash2, KeyRound, UserPlus, MoreVertical } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { StaffAssignmentModal } from '@/components/staff/StaffAssignmentModal';
@@ -236,12 +243,14 @@ export default function Staff() {
                         </Button>
                       </div>
 
-                      {/* Actions */}
+                      {/* Actions - Responsive layout */}
                       <div className="flex items-center gap-2 mt-3">
+                        {/* Desktop: Full buttons */}
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleOpenAssignments(member)}
+                          className="hidden sm:flex"
                         >
                           <UserPlus className="h-4 w-4 mr-1" />
                           Asignar deportistas
@@ -249,7 +258,7 @@ export default function Staff() {
                         
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="text-destructive">
+                            <Button variant="outline" size="sm" className="text-destructive hidden sm:flex">
                               <Trash2 className="h-4 w-4 mr-1" />
                               Eliminar
                             </Button>
@@ -272,6 +281,50 @@ export default function Staff() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
+
+                        {/* Mobile: Compact dropdown menu */}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="sm:hidden min-h-[44px]">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem onClick={() => handleOpenAssignments(member)} className="min-h-[44px]">
+                              <UserPlus className="h-4 w-4 mr-2" />
+                              Asignar deportistas
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem 
+                                  onSelect={(e) => e.preventDefault()}
+                                  className="min-h-[44px] text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Eliminar
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>¿Eliminar asistente?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Esta acción no se puede deshacer. {member.nombre} ya no podrá acceder al sistema.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(member.id)}
+                                    className="bg-destructive text-destructive-foreground"
+                                  >
+                                    Eliminar
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
                   </div>

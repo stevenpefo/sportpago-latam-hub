@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface MobileHeaderProps {
   onMenuClick?: () => void;
@@ -55,6 +55,13 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
+                  {establecimiento?.logoUrl && (
+                    <AvatarImage 
+                      src={establecimiento.logoUrl} 
+                      alt={establecimiento.nombre}
+                      className="object-cover"
+                    />
+                  )}
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                     {initials}
                   </AvatarFallback>

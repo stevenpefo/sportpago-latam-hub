@@ -33,6 +33,8 @@ import { SPORTS } from '@/data/countries';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { matchesSearch } from '@/utils/textUtils';
+import { SportIconDisplay } from '@/utils/sportIcons';
 
 export default function Athletes() {
   const { 
@@ -74,8 +76,8 @@ export default function Athletes() {
   });
 
   const filteredAthletes = athletes.filter(a =>
-    a.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    a.deporte.toLowerCase().includes(searchQuery.toLowerCase())
+    matchesSearch(a.nombre, searchQuery) ||
+    matchesSearch(a.deporte, searchQuery)
   );
 
   const handleRegisterPayment = (athlete: Athlete) => {
@@ -256,8 +258,7 @@ export default function Athletes() {
               {availableSports.length === 1 ? (
                 // Auto-complete: only one sport available
                 <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50 min-h-[44px]">
-                  <Dumbbell className="h-4 w-4 text-primary" />
-                  <span className="font-medium">{availableSports[0]}</span>
+                  <SportIconDisplay sport={availableSports[0]} iconClassName="h-4 w-4 text-primary" />
                   <input type="hidden" value={availableSports[0]} />
                 </div>
               ) : (
@@ -272,7 +273,7 @@ export default function Athletes() {
                   <SelectContent>
                     {availableSports.map((sport) => (
                       <SelectItem key={sport} value={sport} className="min-h-[44px]">
-                        {sport}
+                        <SportIconDisplay sport={sport} />
                       </SelectItem>
                     ))}
                   </SelectContent>
