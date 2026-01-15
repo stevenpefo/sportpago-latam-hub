@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
+import { OnboardingTutorial } from '@/components/onboarding/OnboardingTutorial';
 import { useApp } from '@/context/AppContext';
 import { Athlete } from '@/types';
 import { Users, AlertTriangle, CheckCircle, Clock, TrendingUp, Filter } from 'lucide-react';
@@ -14,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Dashboard() {
   const { 
@@ -28,6 +30,64 @@ export default function Dashboard() {
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialChecked, setTutorialChecked] = useState(false);
+
+  // Check if user needs to see the tutorial
+  useEffect(() => {
+    const checkTutorialStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('tutorial_completado')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile && !profile.tutorial_completado && userRole === 'admin') {
+            setShowTutorial(true);
+          }
+        }
+      } catch (error) {
+        console.log('Tutorial check error:', error);
+      } finally {
+        setTutorialChecked(true);
+      }
+    };
+
+    checkTutorialStatus();
+  }, [userRole]);
+
+  const handleTutorialComplete = async () => {
+    setShowTutorial(false);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ tutorial_completado: true })
+          .eq('id', user.id);
+      }
+    } catch (error) {
+      console.log('Error updating tutorial status:', error);
+    }
+  };
+
+  const handleTutorialSkip = async () => {
+    setShowTutorial(false);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ tutorial_completado: true })
+          .eq('id', user.id);
+      }
+    } catch (error) {
+      console.log('Error updating tutorial status:', error);
+    }
+  };
 
   const stats = useMemo(() => {
     const alDia = athletes.filter(a => a.estadoSistema === 'al-dia').length;
@@ -103,7 +163,7 @@ export default function Dashboard() {
 
         {/* Stats Grid - Only for Admin */}
         {!isStaffView && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3" data-tutorial="payment-status">
             <StatsCard
               title="Al día"
               value={stats.alDia}
@@ -200,6 +260,13 @@ export default function Dashboard() {
         paymentMethods={establecimiento?.metodosPago || []}
         currencySymbol={currencySymbol}
         onConfirm={handleConfirmPayment}
+      />
+
+      {/* Onboarding Tutorial */}
+      <OnboardingTutorial
+        isOpen={showTutorial}
+        onComplete={handleTutorialComplete}
+        onSkip={handleTutorialSkip}
       />
     </AppLayout>
   );
