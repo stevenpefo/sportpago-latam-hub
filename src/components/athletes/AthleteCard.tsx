@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Athlete } from '@/types';
 import { cn } from '@/lib/utils';
+import { SportIconDisplay } from '@/utils/sportIcons';
 
 interface AthleteCardProps {
   athlete: Athlete;
@@ -77,7 +78,9 @@ export function AthleteCard({
                 <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">
                   {athlete.nombre}
                 </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">{athlete.deporte}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                  <SportIconDisplay sport={athlete.deporte} iconClassName="h-3 w-3" />
+                </p>
               </div>
               
               {/* Mobile: Dropdown Menu | Desktop: View Details Button */}
