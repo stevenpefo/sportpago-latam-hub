@@ -219,6 +219,7 @@ export type Database = {
           id: string
           nombre: string
           telefono: string | null
+          tutorial_completado: boolean
           updated_at: string
         }
         Insert: {
@@ -226,6 +227,7 @@ export type Database = {
           id: string
           nombre?: string
           telefono?: string | null
+          tutorial_completado?: boolean
           updated_at?: string
         }
         Update: {
@@ -233,6 +235,7 @@ export type Database = {
           id?: string
           nombre?: string
           telefono?: string | null
+          tutorial_completado?: boolean
           updated_at?: string
         }
         Relationships: []

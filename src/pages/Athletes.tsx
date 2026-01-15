@@ -180,6 +180,7 @@ export default function Athletes() {
               <Button 
                 className="gradient-primary min-h-[44px] min-w-[44px] px-3 sm:px-4"
                 onClick={() => setAddModalOpen(true)}
+                data-tutorial="add-athlete"
               >
                 <Plus className="h-5 w-5 sm:mr-2" />
                 <span className="hidden sm:inline">Agregar</span>

@@ -31,10 +31,18 @@ export function BottomNav() {
       <div className="flex items-center justify-around h-16">
         {filteredItems.map((item) => {
           const isActive = location.pathname === item.href;
+          // Map hrefs to tutorial data attributes
+          const tutorialAttr = 
+            item.href === '/staff' ? 'staff' :
+            item.href === '/settings' ? 'settings' :
+            item.href === '/transactions' ? 'transactions' :
+            undefined;
+          
           return (
             <Link
               key={item.href}
               to={item.href}
+              data-tutorial={tutorialAttr}
               className={cn(
                 'flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg transition-colors min-w-[64px]',
                 isActive 
