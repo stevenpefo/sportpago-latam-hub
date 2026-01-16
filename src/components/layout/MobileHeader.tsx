@@ -1,6 +1,7 @@
 import { Menu, Bell, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
   const { currentUser, establecimiento, logout, userRole } = useApp();
+  const { t } = useLanguage();
 
   const initials = currentUser?.nombre
     .split(' ')
@@ -80,7 +82,7 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
-                Cerrar sesión
+                {t('nav.logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
