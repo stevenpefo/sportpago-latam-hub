@@ -5,6 +5,7 @@ import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
 import { OnboardingTutorial } from '@/components/onboarding/OnboardingTutorial';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Athlete } from '@/types';
 import { Users, AlertTriangle, CheckCircle, Clock, TrendingUp, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ export default function Dashboard() {
     markAsPending,
     markAsInactive,
   } = useApp();
+  const { t } = useLanguage();
 
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -151,12 +153,12 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="space-y-1">
           <h1 className="text-2xl font-bold text-foreground">
-            {isStaffView ? 'Panel de Asistente' : 'Dashboard'}
+            {isStaffView ? t('dashboard.title') : t('dashboard.title')}
           </h1>
           <p className="text-muted-foreground">
             {isStaffView 
-              ? 'Gestiona los pagos de los deportistas'
-              : `Resumen de ${establecimiento?.nombre || 'tu academia'}`
+              ? t('nav.athletes')
+              : `${t('dashboard.welcome')}, ${establecimiento?.nombre || ''}`
             }
           </p>
         </div>
@@ -165,25 +167,25 @@ export default function Dashboard() {
         {!isStaffView && (
           <div className="grid grid-cols-2 gap-3" data-tutorial="payment-status">
             <StatsCard
-              title="Al día"
+              title={t('dashboard.upToDate')}
               value={stats.alDia}
               icon={<CheckCircle className="h-5 w-5" />}
               variant="success"
             />
             <StatsCard
-              title="Por vencer"
+              title={t('dashboard.aboutToExpire')}
               value={stats.porVencer}
               icon={<Clock className="h-5 w-5" />}
               variant="warning"
             />
             <StatsCard
-              title="Vencidos"
+              title={t('dashboard.expired')}
               value={stats.vencidos}
               icon={<AlertTriangle className="h-5 w-5" />}
               variant="danger"
             />
             <StatsCard
-              title="Esperado/mes"
+              title={t('dashboard.monthlyRevenue')}
               value={formatCurrency(stats.totalMensual)}
               icon={<TrendingUp className="h-5 w-5" />}
             />
@@ -195,15 +197,15 @@ export default function Dashboard() {
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-status-danger-light rounded-lg p-3 text-center">
               <p className="text-2xl font-bold text-status-danger">{stats.vencidos}</p>
-              <p className="text-xs text-status-danger">Vencidos</p>
+              <p className="text-xs text-status-danger">{t('dashboard.expired')}</p>
             </div>
             <div className="bg-status-warning-light rounded-lg p-3 text-center">
               <p className="text-2xl font-bold text-status-warning">{stats.porVencer}</p>
-              <p className="text-xs text-status-warning">Por vencer</p>
+              <p className="text-xs text-status-warning">{t('dashboard.aboutToExpire')}</p>
             </div>
             <div className="bg-status-success-light rounded-lg p-3 text-center">
               <p className="text-2xl font-bold text-status-success">{stats.alDia}</p>
-              <p className="text-xs text-status-success">Al día</p>
+              <p className="text-xs text-status-success">{t('dashboard.upToDate')}</p>
             </div>
           </div>
         )}
@@ -212,19 +214,19 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            Deportistas
+            {t('nav.athletes')}
           </h2>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[140px] h-9">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filtrar" />
+              <SelectValue placeholder={t('common.all')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="vencido">Vencidos</SelectItem>
-              <SelectItem value="por-vencer">Por vencer</SelectItem>
-              <SelectItem value="al-dia">Al día</SelectItem>
-              <SelectItem value="inactivo">Inactivos</SelectItem>
+              <SelectItem value="all">{t('common.all')}</SelectItem>
+              <SelectItem value="vencido">{t('status.expired')}</SelectItem>
+              <SelectItem value="por-vencer">{t('status.aboutToExpire')}</SelectItem>
+              <SelectItem value="al-dia">{t('status.upToDate')}</SelectItem>
+              <SelectItem value="inactivo">{t('status.inactive')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -234,7 +236,7 @@ export default function Dashboard() {
           {filteredAthletes.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No hay deportistas con este filtro</p>
+              <p>{t('athletes.noAthletes')}</p>
             </div>
           ) : (
             filteredAthletes.map((athlete) => (

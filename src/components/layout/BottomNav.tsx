@@ -2,25 +2,27 @@ import { Home, Users, Settings, UserCog, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  labelKey: string;
   href: string;
   adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { icon: Home, label: 'Inicio', href: '/dashboard' },
-  { icon: Users, label: 'Deportistas', href: '/athletes' },
-  { icon: Receipt, label: 'Pagos', href: '/transactions', adminOnly: true },
-  { icon: UserCog, label: 'Staff', href: '/staff', adminOnly: true },
-  { icon: Settings, label: 'Ajustes', href: '/settings', adminOnly: true },
+  { icon: Home, labelKey: 'nav.dashboard', href: '/dashboard' },
+  { icon: Users, labelKey: 'nav.athletes', href: '/athletes' },
+  { icon: Receipt, labelKey: 'nav.transactions', href: '/transactions', adminOnly: true },
+  { icon: UserCog, labelKey: 'nav.staff', href: '/staff', adminOnly: true },
+  { icon: Settings, labelKey: 'nav.settings', href: '/settings', adminOnly: true },
 ];
 
 export function BottomNav() {
   const location = useLocation();
   const { userRole } = useApp();
+  const { t } = useLanguage();
 
   const filteredItems = navItems.filter(item => 
     !item.adminOnly || userRole === 'admin'
@@ -51,7 +53,7 @@ export function BottomNav() {
               )}
             >
               <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <span className="text-[10px] font-medium">{t(item.labelKey)}</span>
               {isActive && (
                 <span className="absolute -bottom-0 h-0.5 w-8 bg-primary rounded-full" />
               )}

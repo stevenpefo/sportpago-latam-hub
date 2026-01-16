@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,6 +41,7 @@ import { StaffUser } from '@/types';
 
 export default function Staff() {
   const { staff, athletes, establecimiento, staffAssignments, addStaff, updateStaff, deleteStaff, updateStaffAssignments } = useApp();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -112,9 +114,9 @@ export default function Staff() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Staff</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('staff.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Gestiona tus asistentes
+              {t('staff.title')}
             </p>
           </div>
           
@@ -122,16 +124,16 @@ export default function Staff() {
             <DialogTrigger asChild>
               <Button className="gradient-primary">
                 <Plus className="h-4 w-4 mr-2" />
-                Invitar
+                {t('staff.addStaff')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px] mx-4">
               <DialogHeader>
-                <DialogTitle>Invitar Asistente</DialogTitle>
+                <DialogTitle>{t('staff.addStaff')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="staffName">Nombre del asistente</Label>
+                  <Label htmlFor="staffName">{t('staff.name')}</Label>
                   <Input
                     id="staffName"
                     placeholder="Ej: Pedro García"
@@ -142,12 +144,10 @@ export default function Staff() {
 
                 <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                   <p className="text-sm font-medium text-foreground">
-                    Se generará automáticamente:
+                    {t('staff.accessCode')}:
                   </p>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Código de acceso de 6 dígitos</li>
-                    <li>• Permisos para ver deportistas</li>
-                    <li>• Permisos para registrar pagos</li>
+                    <li>• {t('staff.permissions')}</li>
                   </ul>
                 </div>
               </div>
@@ -158,14 +158,14 @@ export default function Staff() {
                   className="flex-1"
                   onClick={() => setAddModalOpen(false)}
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   className="flex-1 gradient-primary"
                   onClick={handleAddStaff}
                   disabled={!newStaffName.trim()}
                 >
-                  Invitar
+                  {t('staff.addStaff')}
                 </Button>
               </div>
             </DialogContent>
@@ -177,13 +177,13 @@ export default function Staff() {
           {staff.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No tienes asistentes</p>
+              <p>{t('staff.title')}</p>
               <Button 
                 variant="link" 
                 className="mt-2"
                 onClick={() => setAddModalOpen(true)}
               >
-                Invitar al primero
+                {t('staff.addStaff')}
               </Button>
             </div>
           ) : (
@@ -225,7 +225,7 @@ export default function Staff() {
                       </div>
 
                       <p className="text-sm text-muted-foreground">
-                        {member.activo ? 'Activo' : 'Desactivado'}
+                        {member.activo ? t('common.active') : t('common.inactive')}
                       </p>
 
                       {/* Access Code */}
@@ -253,30 +253,30 @@ export default function Staff() {
                           className="hidden sm:flex"
                         >
                           <UserPlus className="h-4 w-4 mr-1" />
-                          Asignar deportistas
+                          {t('staff.assignedAthletes')}
                         </Button>
                         
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="outline" size="sm" className="text-destructive hidden sm:flex">
                               <Trash2 className="h-4 w-4 mr-1" />
-                              Eliminar
+                              {t('common.delete')}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>¿Eliminar asistente?</AlertDialogTitle>
+                              <AlertDialogTitle>{t('common.delete')}?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Esta acción no se puede deshacer. {member.nombre} ya no podrá acceder al sistema.
+                                {member.nombre}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDelete(member.id)}
                                 className="bg-destructive text-destructive-foreground"
                               >
-                                Eliminar
+                                {t('common.delete')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -292,7 +292,7 @@ export default function Staff() {
                           <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuItem onClick={() => handleOpenAssignments(member)} className="min-h-[44px]">
                               <UserPlus className="h-4 w-4 mr-2" />
-                              Asignar deportistas
+                              {t('staff.assignedAthletes')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <AlertDialog>
@@ -302,23 +302,23 @@ export default function Staff() {
                                   className="min-h-[44px] text-destructive focus:text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
-                                  Eliminar
+                                  {t('common.delete')}
                                 </DropdownMenuItem>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>¿Eliminar asistente?</AlertDialogTitle>
+                                  <AlertDialogTitle>{t('common.delete')}?</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    Esta acción no se puede deshacer. {member.nombre} ya no podrá acceder al sistema.
+                                    {member.nombre}
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                  <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                                   <AlertDialogAction
                                     onClick={() => handleDelete(member.id)}
                                     className="bg-destructive text-destructive-foreground"
                                   >
-                                    Eliminar
+                                    {t('common.delete')}
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>

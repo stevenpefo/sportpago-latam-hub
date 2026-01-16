@@ -4,6 +4,7 @@ import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
 import { BulkPriceModal } from '@/components/athletes/BulkPriceModal';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Athlete } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,6 +52,7 @@ export default function Athletes() {
     enabledSports,
     customSports,
   } = useApp();
+  const { t } = useLanguage();
 
   // Get available sports: combine predefined (minus "Otros") + custom, then filter by enabled
   const allSports = [...SPORTS.filter(s => s !== 'Otros'), ...customSports];
@@ -159,8 +161,8 @@ export default function Athletes() {
         {/* Header with Add Button always visible */}
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">Deportistas</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">{athletes.length} registrados</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">{t('athletes.title')}</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">{athletes.length} {t('athletes.title').toLowerCase()}</p>
           </div>
           
           <div className="flex items-center gap-2 shrink-0">
@@ -173,7 +175,7 @@ export default function Athletes() {
                 className="hidden sm:flex min-h-[44px]"
               >
                 <DollarSign className="h-4 w-4 mr-1" />
-                Modificar Precios
+                {t('athletes.monthlyFee')}
               </Button>
             )}
             
@@ -185,7 +187,7 @@ export default function Athletes() {
                 data-tutorial="add-athlete"
               >
                 <Plus className="h-5 w-5 sm:mr-2" />
-                <span className="hidden sm:inline">Agregar</span>
+                <span className="hidden sm:inline">{t('athletes.addAthlete')}</span>
               </Button>
             )}
           </div>
@@ -195,7 +197,7 @@ export default function Athletes() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nombre o deporte..."
+            placeholder={t('athletes.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 min-h-[44px]"
@@ -207,14 +209,14 @@ export default function Athletes() {
           {filteredAthletes.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No se encontraron deportistas</p>
+              <p>{t('athletes.noAthletes')}</p>
               {canAddAthletes && (
                 <Button 
                   variant="link" 
                   className="mt-2 min-h-[44px]"
                   onClick={() => setAddModalOpen(true)}
                 >
-                  Agregar el primero
+                  {t('common.add')}
                 </Button>
               )}
             </div>
@@ -238,11 +240,11 @@ export default function Athletes() {
       <Dialog open={addModalOpen} onOpenChange={setAddModalOpen}>
         <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Nuevo Deportista</DialogTitle>
+            <DialogTitle>{t('athletes.addAthlete')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="nombre">Nombre completo</Label>
+              <Label htmlFor="nombre">{t('athletes.name')}</Label>
               <Input
                 id="nombre"
                 placeholder="Juan Pérez"
@@ -254,7 +256,7 @@ export default function Athletes() {
 
             {/* Sport - Auto-select if only one, dropdown if multiple */}
             <div className="space-y-2">
-              <Label htmlFor="deporte">Deporte</Label>
+              <Label htmlFor="deporte">{t('athletes.sport')}</Label>
               {availableSports.length === 1 ? (
                 // Auto-complete: only one sport available
                 <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50 min-h-[44px]">
@@ -297,7 +299,7 @@ export default function Athletes() {
 
             {/* Date of Birth - Spanish calendar */}
             <div className="space-y-2">
-              <Label>Fecha de Nacimiento</Label>
+              <Label>{t('athletes.birthDate')}</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -332,18 +334,18 @@ export default function Athletes() {
 
             {/* Category - Text input with autocomplete */}
             <div className="space-y-2">
-              <Label htmlFor="categoria">Categoría</Label>
+              <Label htmlFor="categoria">{t('athletes.category')}</Label>
               <CategoryInput
                 value={newAthlete.categoria}
                 onChange={(value) => setNewAthlete({ ...newAthlete, categoria: value })}
                 savedCategories={customCategories}
-                placeholder="Escribe o selecciona una categoría..."
+                placeholder={t('athletes.category')}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
-                <Label htmlFor="telefono">Teléfono</Label>
+                <Label htmlFor="telefono">{t('athletes.phone')}</Label>
                 <Input
                   id="telefono"
                   placeholder="+57 300..."
@@ -353,7 +355,7 @@ export default function Athletes() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('athletes.email')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -367,7 +369,7 @@ export default function Athletes() {
 
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
-                <Label htmlFor="monto">Monto mensual ({currencySymbol})</Label>
+                <Label htmlFor="monto">{t('athletes.monthlyFee')} ({currencySymbol})</Label>
                 <Input
                   id="monto"
                   type="number"
@@ -378,7 +380,7 @@ export default function Athletes() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="diaPago">Día de pago</Label>
+                <Label htmlFor="diaPago">{t('athletes.paymentDay')}</Label>
                 <Select
                   value={newAthlete.diaPago}
                   onValueChange={(value) => setNewAthlete({ ...newAthlete, diaPago: value })}
@@ -404,14 +406,14 @@ export default function Athletes() {
               className="flex-1 min-h-[44px]"
               onClick={() => setAddModalOpen(false)}
             >
-              Cancelar
+              {t('common.cancel')}
             </Button>
             <Button
               className="flex-1 gradient-primary min-h-[44px]"
               onClick={handleAddAthlete}
               disabled={!newAthlete.nombre || (availableSports.length > 1 && !newAthlete.deporte) || !newAthlete.montoMensual || (newAthlete.deporte === 'Otros' && !newAthlete.deportePersonalizado)}
             >
-              Guardar
+              {t('common.save')}
             </Button>
           </div>
         </DialogContent>

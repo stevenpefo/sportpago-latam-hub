@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Receipt, TrendingUp, Calendar, Banknote, FileText, Download } from 'lucide-react';
@@ -15,6 +16,7 @@ import { Athlete } from '@/types';
 
 export default function Transactions() {
   const { transactions, athletes, establecimiento } = useApp();
+  const { t } = useLanguage();
   const currencySymbol = establecimiento?.simboloMoneda || '$';
 
   const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
@@ -110,9 +112,9 @@ export default function Transactions() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Pagos</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('transactions.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Historial de transacciones
+              {t('transactions.title')}
             </p>
           </div>
           <Button 
@@ -123,20 +125,20 @@ export default function Transactions() {
             className="gap-2"
           >
             <Download className="h-4 w-4" />
-            Exportar
+            {t('transactions.export')}
           </Button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           <StatsCard
-            title="Total filtrado"
+            title={t('payment.total')}
             value={formatCurrency(stats.amount)}
             icon={<TrendingUp className="h-5 w-5" />}
             variant="success"
           />
           <StatsCard
-            title="Transacciones"
+            title={t('transactions.title')}
             value={stats.total}
             icon={<Receipt className="h-5 w-5" />}
           />
@@ -159,22 +161,17 @@ export default function Transactions() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-foreground">
-              Transacciones
+              {t('transactions.title')}
             </h2>
             <span className="text-sm text-muted-foreground">
-              {filteredTransactions.length} resultado(s)
+              {filteredTransactions.length}
             </span>
           </div>
 
           {filteredTransactions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Receipt className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>
-                {selectedMethods.length > 0 || dateRange?.from
-                  ? 'No hay transacciones con los filtros seleccionados'
-                  : 'No hay transacciones registradas'
-                }
-              </p>
+              <p>{t('transactions.title')}</p>
             </div>
           ) : (
             filteredTransactions.map((transaction) => (
@@ -194,7 +191,7 @@ export default function Transactions() {
                       <p className="text-sm text-muted-foreground">
                         {getPaymentMethodName(transaction.metodoPago)}
                         {transaction.mesesPagados > 1 && (
-                          <span className="ml-1">• {transaction.mesesPagados} meses</span>
+                          <span className="ml-1">• {transaction.mesesPagados} {t('payment.months')}</span>
                         )}
                       </p>
                       <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
@@ -203,7 +200,7 @@ export default function Transactions() {
                       </div>
                       {transaction.referencia && (
                         <p className="text-xs text-muted-foreground mt-1">
-                          Ref: {transaction.referencia}
+                          {t('transactions.reference')}: {transaction.referencia}
                         </p>
                       )}
                       {transaction.observaciones && (
