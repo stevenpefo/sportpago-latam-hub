@@ -1,27 +1,56 @@
 import { Country } from '@/types';
 
-export const COUNTRIES: Country[] = [
-  { code: 'AR', name: 'Argentina', currency: 'ARS', currencySymbol: '$', flag: '🇦🇷' },
-  { code: 'BO', name: 'Bolivia', currency: 'BOB', currencySymbol: 'Bs', flag: '🇧🇴' },
-  { code: 'BR', name: 'Brasil', currency: 'BRL', currencySymbol: 'R$', flag: '🇧🇷' },
-  { code: 'CL', name: 'Chile', currency: 'CLP', currencySymbol: '$', flag: '🇨🇱' },
-  { code: 'CO', name: 'Colombia', currency: 'COP', currencySymbol: '$', flag: '🇨🇴' },
-  { code: 'CR', name: 'Costa Rica', currency: 'CRC', currencySymbol: '₡', flag: '🇨🇷' },
-  { code: 'CU', name: 'Cuba', currency: 'CUP', currencySymbol: '$', flag: '🇨🇺' },
-  { code: 'DO', name: 'República Dominicana', currency: 'DOP', currencySymbol: 'RD$', flag: '🇩🇴' },
-  { code: 'EC', name: 'Ecuador', currency: 'USD', currencySymbol: '$', flag: '🇪🇨' },
-  { code: 'SV', name: 'El Salvador', currency: 'USD', currencySymbol: '$', flag: '🇸🇻' },
-  { code: 'GT', name: 'Guatemala', currency: 'GTQ', currencySymbol: 'Q', flag: '🇬🇹' },
-  { code: 'HN', name: 'Honduras', currency: 'HNL', currencySymbol: 'L', flag: '🇭🇳' },
-  { code: 'MX', name: 'México', currency: 'MXN', currencySymbol: '$', flag: '🇲🇽' },
-  { code: 'NI', name: 'Nicaragua', currency: 'NIO', currencySymbol: 'C$', flag: '🇳🇮' },
-  { code: 'PA', name: 'Panamá', currency: 'PAB', currencySymbol: 'B/.', flag: '🇵🇦' },
-  { code: 'PY', name: 'Paraguay', currency: 'PYG', currencySymbol: '₲', flag: '🇵🇾' },
-  { code: 'PE', name: 'Perú', currency: 'PEN', currencySymbol: 'S/', flag: '🇵🇪' },
-  { code: 'PR', name: 'Puerto Rico', currency: 'USD', currencySymbol: '$', flag: '🇵🇷' },
-  { code: 'UY', name: 'Uruguay', currency: 'UYU', currencySymbol: '$U', flag: '🇺🇾' },
-  { code: 'VE', name: 'Venezuela', currency: 'VES', currencySymbol: 'Bs', flag: '🇻🇪' },
+export type DateFormat = 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD';
+
+export interface ExtendedCountry extends Country {
+  dateFormat: DateFormat;
+  region: 'latam' | 'north-america';
+}
+
+export const COUNTRIES: ExtendedCountry[] = [
+  // North America
+  { code: 'US', name: 'United States', currency: 'USD', currencySymbol: '$', flag: '🇺🇸', dateFormat: 'MM/DD/YYYY', region: 'north-america' },
+  { code: 'CA', name: 'Canada', currency: 'CAD', currencySymbol: 'C$', flag: '🇨🇦', dateFormat: 'YYYY-MM-DD', region: 'north-america' },
+  
+  // Latin America
+  { code: 'AR', name: 'Argentina', currency: 'ARS', currencySymbol: '$', flag: '🇦🇷', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'BO', name: 'Bolivia', currency: 'BOB', currencySymbol: 'Bs', flag: '🇧🇴', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'BR', name: 'Brasil', currency: 'BRL', currencySymbol: 'R$', flag: '🇧🇷', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'CL', name: 'Chile', currency: 'CLP', currencySymbol: '$', flag: '🇨🇱', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'CO', name: 'Colombia', currency: 'COP', currencySymbol: '$', flag: '🇨🇴', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'CR', name: 'Costa Rica', currency: 'CRC', currencySymbol: '₡', flag: '🇨🇷', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'CU', name: 'Cuba', currency: 'CUP', currencySymbol: '$', flag: '🇨🇺', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'DO', name: 'República Dominicana', currency: 'DOP', currencySymbol: 'RD$', flag: '🇩🇴', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'EC', name: 'Ecuador', currency: 'USD', currencySymbol: '$', flag: '🇪🇨', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'SV', name: 'El Salvador', currency: 'USD', currencySymbol: '$', flag: '🇸🇻', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'GT', name: 'Guatemala', currency: 'GTQ', currencySymbol: 'Q', flag: '🇬🇹', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'HN', name: 'Honduras', currency: 'HNL', currencySymbol: 'L', flag: '🇭🇳', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'MX', name: 'México', currency: 'MXN', currencySymbol: '$', flag: '🇲🇽', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'NI', name: 'Nicaragua', currency: 'NIO', currencySymbol: 'C$', flag: '🇳🇮', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'PA', name: 'Panamá', currency: 'PAB', currencySymbol: 'B/.', flag: '🇵🇦', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'PY', name: 'Paraguay', currency: 'PYG', currencySymbol: '₲', flag: '🇵🇾', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'PE', name: 'Perú', currency: 'PEN', currencySymbol: 'S/', flag: '🇵🇪', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'PR', name: 'Puerto Rico', currency: 'USD', currencySymbol: '$', flag: '🇵🇷', dateFormat: 'MM/DD/YYYY', region: 'latam' },
+  { code: 'UY', name: 'Uruguay', currency: 'UYU', currencySymbol: '$U', flag: '🇺🇾', dateFormat: 'DD/MM/YYYY', region: 'latam' },
+  { code: 'VE', name: 'Venezuela', currency: 'VES', currencySymbol: 'Bs', flag: '🇻🇪', dateFormat: 'DD/MM/YYYY', region: 'latam' },
 ];
+
+// Payment methods by region
+export const PAYMENT_METHODS_BY_COUNTRY: Record<string, { id: string; nombre: string; icono: string }[]> = {
+  US: [
+    { id: 'cash', nombre: 'Cash', icono: 'banknote' },
+    { id: 'zelle', nombre: 'Zelle', icono: 'smartphone' },
+    { id: 'venmo', nombre: 'Venmo', icono: 'wallet' },
+    { id: 'credit-card', nombre: 'Credit Card', icono: 'credit-card' },
+    { id: 'bank-transfer', nombre: 'Bank Transfer', icono: 'building-2' },
+  ],
+  CA: [
+    { id: 'cash', nombre: 'Cash', icono: 'banknote' },
+    { id: 'interac', nombre: 'Interac e-Transfer', icono: 'smartphone' },
+    { id: 'credit-card', nombre: 'Credit Card', icono: 'credit-card' },
+    { id: 'bank-transfer', nombre: 'Bank Transfer', icono: 'building-2' },
+  ],
+};
 
 export const DEFAULT_PAYMENT_METHODS = [
   { id: 'efectivo', nombre: 'Efectivo', icono: 'banknote', activo: true, esPersonalizado: false },

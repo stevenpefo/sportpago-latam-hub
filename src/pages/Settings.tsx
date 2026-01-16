@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,8 +32,10 @@ import {
   Wallet,
   Smartphone,
   Dumbbell,
+  Languages,
 } from 'lucide-react';
 import { COUNTRIES, DEFAULT_PAYMENT_METHODS, SPORTS } from '@/data/countries';
+import { LANGUAGES, Language } from '@/i18n';
 import { PaymentMethod } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -58,6 +61,7 @@ export default function Settings() {
     addCustomSport,
     deleteCustomSport,
   } = useApp();
+  const { language, setLanguage, t } = useLanguage();
   const { toast } = useToast();
   
   const [addMethodOpen, setAddMethodOpen] = useState(false);
@@ -545,6 +549,49 @@ export default function Settings() {
                   </div>
                 );
               })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Language Selector */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Languages className="h-5 w-5 text-primary" />
+              {t('settings.language')}
+            </CardTitle>
+            <CardDescription>
+              {t('settings.languageDesc')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setLanguage(lang.code);
+                    toast({
+                      title: lang.nativeName,
+                      description: `Language changed to ${lang.name}`,
+                    });
+                  }}
+                  className={cn(
+                    'flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all min-h-[80px]',
+                    language === lang.code
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-primary/50'
+                  )}
+                >
+                  <span className="text-2xl">{lang.flag}</span>
+                  <span className={cn(
+                    'text-sm font-medium',
+                    language === lang.code ? 'text-primary' : 'text-foreground'
+                  )}>
+                    {lang.nativeName}
+                  </span>
+                </button>
+              ))}
             </div>
           </CardContent>
         </Card>
