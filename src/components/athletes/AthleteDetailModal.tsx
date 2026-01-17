@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -22,7 +21,10 @@ import {
   ImageIcon,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS, fr, pt } from 'date-fns/locale';
+import { useLanguage } from '@/hooks/useLanguage';
+
+const dateLocales = { es, en: enUS, fr, pt };
 
 interface AthleteDetailModalProps {
   open: boolean;
@@ -39,6 +41,8 @@ export function AthleteDetailModal({
   transactions,
   currencySymbol,
 }: AthleteDetailModalProps) {
+  const { t, language } = useLanguage();
+  
   if (!athlete) return null;
 
   const athleteTransactions = transactions
@@ -50,11 +54,11 @@ export function AthleteDetailModal({
   };
 
   const formatDate = (date: Date) => {
-    return format(new Date(date), "dd MMM yyyy", { locale: es });
+    return format(new Date(date), "dd MMM yyyy", { locale: dateLocales[language] });
   };
 
   const formatDateTime = (date: Date) => {
-    return format(new Date(date), "dd MMM yyyy, HH:mm", { locale: es });
+    return format(new Date(date), "dd MMM yyyy, HH:mm", { locale: dateLocales[language] });
   };
 
   const getStatusColor = (status: string) => {
@@ -73,11 +77,11 @@ export function AthleteDetailModal({
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'al-dia':
-        return 'Al día';
+        return t('status.upToDate');
       case 'por-vencer':
-        return 'Por vencer';
+        return t('status.aboutToExpire');
       case 'vencido':
-        return 'Vencido';
+        return t('status.expired');
       default:
         return status;
     }
@@ -89,7 +93,7 @@ export function AthleteDetailModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="sr-only">Detalles del deportista</DialogTitle>
+          <DialogTitle className="sr-only">{t('athleteDetail.title')}</DialogTitle>
         </DialogHeader>
 
         {/* Athlete Header */}
@@ -112,19 +116,19 @@ export function AthleteDetailModal({
             </div>
             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">
-                {formatCurrency(athlete.montoMensual)}/mes
+                {formatCurrency(athlete.montoMensual)}/{t('athleteDetail.perMonth')}
               </span>
               <span>•</span>
-              <span>Día de pago: {athlete.diaPago}</span>
+              <span>{t('athletes.paymentDay')}: {athlete.diaPago}</span>
             </div>
           </div>
         </div>
 
         <Tabs defaultValue="info" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="info">Información</TabsTrigger>
+            <TabsTrigger value="info">{t('athleteDetail.information')}</TabsTrigger>
             <TabsTrigger value="payments">
-              Pagos ({athleteTransactions.length})
+              {t('athleteDetail.payments')} ({athleteTransactions.length})
             </TabsTrigger>
           </TabsList>
 
@@ -133,7 +137,7 @@ export function AthleteDetailModal({
             <Card className="p-4 space-y-3">
               <h3 className="font-semibold text-foreground flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Información de contacto
+                {t('athleteDetail.contactInfo')}
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-3">
@@ -147,13 +151,13 @@ export function AthleteDetailModal({
                 {athlete.fechaNacimiento && (
                   <div className="flex items-center gap-3">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>Nacimiento: {formatDate(athlete.fechaNacimiento)}</span>
+                    <span>{t('athletes.birthDate')}: {formatDate(athlete.fechaNacimiento)}</span>
                   </div>
                 )}
                 {athlete.categoria && (
                   <div className="flex items-center gap-3">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span>Categoría: {athlete.categoria}</span>
+                    <span>{t('athletes.category')}: {athlete.categoria}</span>
                   </div>
                 )}
               </div>
@@ -163,29 +167,29 @@ export function AthleteDetailModal({
             <Card className="p-4 space-y-3">
               <h3 className="font-semibold text-foreground flex items-center gap-2">
                 <Banknote className="h-4 w-4" />
-                Información de pago
+                {t('athleteDetail.paymentInfo')}
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Monto mensual</span>
+                  <span className="text-muted-foreground">{t('athletes.monthlyFee')}</span>
                   <span className="font-medium">{formatCurrency(athlete.montoMensual)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Día de pago</span>
+                  <span className="text-muted-foreground">{t('athletes.paymentDay')}</span>
                   <span className="font-medium">{athlete.diaPago}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Último pago</span>
+                  <span className="text-muted-foreground">{t('athletes.lastPayment')}</span>
                   <span className="font-medium">
-                    {athlete.ultimoPago ? formatDate(athlete.ultimoPago) : 'Sin pagos'}
+                    {athlete.ultimoPago ? formatDate(athlete.ultimoPago) : t('athleteDetail.noPayments')}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Próximo pago</span>
+                  <span className="text-muted-foreground">{t('athletes.nextPayment')}</span>
                   <span className="font-medium">{formatDate(athlete.proximoPago)}</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t">
-                  <span className="text-muted-foreground">Total pagado</span>
+                  <span className="text-muted-foreground">{t('athleteDetail.totalPaid')}</span>
                   <span className="font-bold text-status-success">
                     {formatCurrency(totalPaid)}
                   </span>
@@ -198,7 +202,7 @@ export function AthleteDetailModal({
             {athleteTransactions.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Receipt className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>No hay pagos registrados</p>
+                <p>{t('athleteDetail.noPaymentsRegistered')}</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
@@ -212,7 +216,7 @@ export function AthleteDetailModal({
                           </span>
                           {transaction.mesesPagados > 1 && (
                             <Badge variant="secondary" className="text-xs">
-                              {transaction.mesesPagados} meses
+                              {transaction.mesesPagados} {t('payment.months')}
                             </Badge>
                           )}
                         </div>
@@ -221,7 +225,7 @@ export function AthleteDetailModal({
                           {formatDateTime(transaction.fecha)}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {transaction.metodoPago} • Por: {transaction.registradoPorNombre}
+                          {transaction.metodoPago} • {t('transactions.registeredBy')}: {transaction.registradoPorNombre}
                         </p>
                       </div>
                     </div>
@@ -239,7 +243,7 @@ export function AthleteDetailModal({
                     {/* Receipt/Reference */}
                     {transaction.referencia && (
                       <p className="mt-2 text-xs text-muted-foreground">
-                        Ref: {transaction.referencia}
+                        {t('transactions.reference')}: {transaction.referencia}
                       </p>
                     )}
 
@@ -253,7 +257,7 @@ export function AthleteDetailModal({
                           rel="noopener noreferrer"
                           className="text-primary hover:underline"
                         >
-                          Ver comprobante
+                          {t('athleteDetail.viewReceipt')}
                         </a>
                       </div>
                     )}
