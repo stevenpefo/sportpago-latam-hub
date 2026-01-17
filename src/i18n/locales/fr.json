@@ -140,6 +140,18 @@
     "nextPaymentDate": "Prochain paiement sera le",
     "confirmPayment": "Confirmer Paiement"
   },
+  "athleteDetail": {
+    "title": "Détails de l'athlète",
+    "perMonth": "mois",
+    "information": "Information",
+    "payments": "Paiements",
+    "contactInfo": "Informations de contact",
+    "paymentInfo": "Informations de paiement",
+    "noPayments": "Aucun paiement",
+    "totalPaid": "Total payé",
+    "noPaymentsRegistered": "Aucun paiement enregistré",
+    "viewReceipt": "Voir le reçu"
+  },
   "status": {
     "upToDate": "À jour",
     "aboutToExpire": "Bientôt dû",
