@@ -18,7 +18,9 @@
     "none": "Ninguno",
     "active": "Activo",
     "inactive": "Inactivo",
-    "custom": "Personalizado"
+    "custom": "Personalizado",
+    "optional": "opcional",
+    "example": "Ej"
   },
   "nav": {
     "dashboard": "Inicio",
@@ -65,7 +67,11 @@
     "registerPayment": "Registrar pago",
     "identification": "Identificación",
     "birthDate": "Fecha de nacimiento",
-    "referredBy": "Referido por"
+    "referredBy": "Referido por",
+    "markPending": "Marcar Pendiente",
+    "markInactive": "Marcar Inactivo",
+    "call": "Llamar",
+    "sendEmail": "Enviar Email"
   },
   "staff": {
     "title": "Asistentes",
@@ -117,14 +123,22 @@
   "payment": {
     "registerPayment": "Registrar Pago",
     "monthlyFee": "Cuota mensual",
-    "multipleMonths": "Varios meses",
+    "paymentType": "Tipo de pago",
+    "multipleMonths": "Pago múltiple meses",
+    "monthCount": "Cantidad de meses",
+    "month": "mes",
     "months": "meses",
-    "customAmount": "Monto personalizado",
-    "selectMethod": "Seleccionar método de pago",
-    "reference": "Referencia",
+    "calculatedAmount": "Monto calculado",
+    "customAmount": "Monto personalizado (promociones/descuentos)",
+    "selectMethod": "Método de pago",
+    "reference": "Referencia / Comprobante",
+    "referencePlaceholder": "Ej: #12345 o número de transacción",
     "observations": "Observaciones",
-    "total": "Total",
-    "nextPaymentDate": "Próximo pago"
+    "observationsPlaceholder": "Notas adicionales sobre el pago",
+    "total": "Total a pagar",
+    "ofMonthlyFee": "de mensualidad",
+    "nextPaymentDate": "Próximo pago será",
+    "confirmPayment": "Confirmar Pago"
   },
   "status": {
     "upToDate": "Al día",

@@ -18,7 +18,9 @@
     "none": "Aucun",
     "active": "Actif",
     "inactive": "Inactif",
-    "custom": "Personnalisé"
+    "custom": "Personnalisé",
+    "optional": "optionnel",
+    "example": "Ex"
   },
   "nav": {
     "dashboard": "Accueil",
@@ -65,7 +67,11 @@
     "registerPayment": "Enregistrer paiement",
     "identification": "Identification",
     "birthDate": "Date de naissance",
-    "referredBy": "Référé par"
+    "referredBy": "Référé par",
+    "markPending": "Marquer En attente",
+    "markInactive": "Marquer Inactif",
+    "call": "Appeler",
+    "sendEmail": "Envoyer Email"
   },
   "staff": {
     "title": "Personnel",
@@ -117,14 +123,22 @@
   "payment": {
     "registerPayment": "Enregistrer Paiement",
     "monthlyFee": "Frais mensuels",
-    "multipleMonths": "Plusieurs mois",
+    "paymentType": "Type de paiement",
+    "multipleMonths": "Paiement plusieurs mois",
+    "monthCount": "Nombre de mois",
+    "month": "mois",
     "months": "mois",
-    "customAmount": "Montant personnalisé",
-    "selectMethod": "Sélectionner méthode de paiement",
-    "reference": "Référence",
+    "calculatedAmount": "Montant calculé",
+    "customAmount": "Montant personnalisé (promotions/remises)",
+    "selectMethod": "Méthode de paiement",
+    "reference": "Référence / Reçu",
+    "referencePlaceholder": "Ex: #12345 ou numéro de transaction",
     "observations": "Observations",
-    "total": "Total",
-    "nextPaymentDate": "Prochain paiement"
+    "observationsPlaceholder": "Notes supplémentaires sur le paiement",
+    "total": "Total à payer",
+    "ofMonthlyFee": "de frais mensuels",
+    "nextPaymentDate": "Prochain paiement sera le",
+    "confirmPayment": "Confirmer Paiement"
   },
   "status": {
     "upToDate": "À jour",

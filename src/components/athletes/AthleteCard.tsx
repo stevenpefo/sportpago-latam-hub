@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Check, Clock, XCircle, Phone, Mail, MoreVertical } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import {
 import { Athlete } from '@/types';
 import { cn } from '@/lib/utils';
 import { SportIconDisplay } from '@/utils/sportIcons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface AthleteCardProps {
   athlete: Athlete;
@@ -33,6 +33,8 @@ export function AthleteCard({
   onViewDetails,
   isStaffView = false,
 }: AthleteCardProps) {
+  const { t, language } = useLanguage();
+  
   const initials = athlete.nombre
     .split(' ')
     .map(n => n[0])
@@ -44,8 +46,15 @@ export function AthleteCard({
     return `${currencySymbol}${amount.toLocaleString()}`;
   };
 
+  const localeMap: Record<string, string> = {
+    es: 'es-ES',
+    en: 'en-US',
+    fr: 'fr-FR',
+    pt: 'pt-BR',
+  };
+
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('es-ES', {
+    return new Date(date).toLocaleDateString(localeMap[language], {
       day: '2-digit',
       month: 'short',
     });
@@ -102,27 +111,27 @@ export function AthleteCard({
                       className="min-h-[44px] text-status-success"
                     >
                       <Check className="h-4 w-4 mr-2" />
-                      Registrar Pago
+                      {t('athletes.registerPayment')}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => onMarkPending(athlete.id)}
                       className="min-h-[44px] text-status-warning"
                     >
                       <Clock className="h-4 w-4 mr-2" />
-                      Marcar Pendiente
+                      {t('athletes.markPending')}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => onMarkInactive(athlete.id)}
                       className="min-h-[44px] text-status-inactive"
                     >
                       <XCircle className="h-4 w-4 mr-2" />
-                      Marcar Inactivo
+                      {t('athletes.markInactive')}
                     </DropdownMenuItem>
                     {!isStaffView && athlete.telefono && (
                       <DropdownMenuItem asChild className="min-h-[44px]">
                         <a href={`tel:${athlete.telefono}`}>
                           <Phone className="h-4 w-4 mr-2" />
-                          Llamar
+                          {t('athletes.call')}
                         </a>
                       </DropdownMenuItem>
                     )}
@@ -130,7 +139,7 @@ export function AthleteCard({
                       <DropdownMenuItem asChild className="min-h-[44px]">
                         <a href={`mailto:${athlete.email}`}>
                           <Mail className="h-4 w-4 mr-2" />
-                          Enviar Email
+                          {t('athletes.sendEmail')}
                         </a>
                       </DropdownMenuItem>
                     )}
@@ -147,14 +156,14 @@ export function AthleteCard({
             </div>
 
             <div className="flex items-center justify-between mt-2 sm:mt-3 text-xs sm:text-sm">
-              <span className="text-muted-foreground">Próximo:</span>
+              <span className="text-muted-foreground">{t('athletes.nextPayment')}:</span>
               <span className="font-medium text-foreground">
                 {formatDate(athlete.proximoPago)}
               </span>
             </div>
 
             <div className="flex items-center justify-between text-xs sm:text-sm">
-              <span className="text-muted-foreground">Monto:</span>
+              <span className="text-muted-foreground">{t('athletes.monthlyFee')}:</span>
               <span className="font-semibold text-primary">
                 {formatCurrency(athlete.montoMensual)}
               </span>
@@ -170,7 +179,7 @@ export function AthleteCard({
             onClick={() => onRegisterPayment(athlete)}
           >
             <Check className="h-4 w-4 mr-1" />
-            <span className="text-xs">Pagó</span>
+            <span className="text-xs">{t('status.paid')}</span>
           </Button>
           <Button
             size="sm"
@@ -179,7 +188,7 @@ export function AthleteCard({
             onClick={() => onMarkPending(athlete.id)}
           >
             <Clock className="h-4 w-4 mr-1" />
-            <span className="text-xs">Pendiente</span>
+            <span className="text-xs">{t('status.pending')}</span>
           </Button>
           <Button
             size="sm"
@@ -188,7 +197,7 @@ export function AthleteCard({
             onClick={() => onMarkInactive(athlete.id)}
           >
             <XCircle className="h-4 w-4 mr-1" />
-            <span className="text-xs">Inactivo</span>
+            <span className="text-xs">{t('status.inactive')}</span>
           </Button>
         </div>
 
