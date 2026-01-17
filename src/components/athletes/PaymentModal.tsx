@@ -24,7 +24,10 @@ import {
   Calendar,
 } from 'lucide-react';
 import { format, addDays } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS, fr, pt } from 'date-fns/locale';
+import { useLanguage } from '@/hooks/useLanguage';
+
+const dateLocales = { es, en: enUS, fr, pt };
 
 interface PaymentModalProps {
   open: boolean;
@@ -57,6 +60,7 @@ export function PaymentModal({
   currencySymbol,
   onConfirm,
 }: PaymentModalProps) {
+  const { t, language } = useLanguage();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [referencia, setReferencia] = useState('');
   const [observaciones, setObservaciones] = useState('');
@@ -130,20 +134,20 @@ export function PaymentModal({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[480px] mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Registrar Pago</DialogTitle>
+          <DialogTitle>{t('payment.registerPayment')}</DialogTitle>
           <DialogDescription>
-            {athlete.nombre} • Mensualidad: {formatCurrency(athlete.montoMensual)}
+            {athlete.nombre} • {t('payment.monthlyFee')}: {formatCurrency(athlete.montoMensual)}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Payment Type Selection */}
           <div className="space-y-3">
-            <Label>Tipo de pago</Label>
+            <Label>{t('payment.paymentType')}</Label>
             <div className="flex items-center justify-between p-3 rounded-lg border">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Pago múltiple meses</span>
+                <span className="text-sm font-medium">{t('payment.multipleMonths')}</span>
               </div>
               <Switch
                 checked={isMultipleMonths}
@@ -163,7 +167,7 @@ export function PaymentModal({
           {isMultipleMonths && (
             <div className="space-y-4 p-4 rounded-lg bg-muted/50">
               <div className="flex justify-between items-center">
-                <Label>Cantidad de meses</Label>
+                <Label>{t('payment.monthCount')}</Label>
                 <span className="text-2xl font-bold text-primary">{monthsCount[0]}</span>
               </div>
               <Slider
@@ -175,14 +179,14 @@ export function PaymentModal({
                 className="w-full"
               />
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>1 mes</span>
-                <span>12 meses</span>
+                <span>1 {t('payment.month')}</span>
+                <span>12 {t('payment.months')}</span>
               </div>
               
               {/* Calculated Amount */}
               <div className="pt-2 border-t">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Monto calculado:</span>
+                  <span className="text-sm text-muted-foreground">{t('payment.calculatedAmount')}:</span>
                   <span className="text-lg font-semibold">{formatCurrency(calculatedAmount)}</span>
                 </div>
               </div>
@@ -191,7 +195,7 @@ export function PaymentModal({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="customAmount" className="text-sm">
-                    Monto personalizado (promociones/descuentos)
+                    {t('payment.customAmount')}
                   </Label>
                   <Switch
                     checked={useCustomAmount}
@@ -202,7 +206,7 @@ export function PaymentModal({
                   <Input
                     id="customAmount"
                     type="number"
-                    placeholder={`Ej: ${Math.round(calculatedAmount * 0.9)}`}
+                    placeholder={`${t('common.example')}: ${Math.round(calculatedAmount * 0.9)}`}
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
                     className="mt-2"
@@ -212,9 +216,9 @@ export function PaymentModal({
 
               {/* Next Payment Date Preview */}
               <div className="flex justify-between items-center pt-2 border-t">
-                <span className="text-sm text-muted-foreground">Próximo pago será:</span>
+                <span className="text-sm text-muted-foreground">{t('payment.nextPaymentDate')}:</span>
                 <span className="text-sm font-medium">
-                  {format(nextPaymentDate, "d 'de' MMMM, yyyy", { locale: es })}
+                  {format(nextPaymentDate, "PPP", { locale: dateLocales[language] })}
                 </span>
               </div>
             </div>
@@ -223,19 +227,19 @@ export function PaymentModal({
           {/* Final Amount Display */}
           <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
             <div className="flex justify-between items-center">
-              <span className="font-medium">Total a pagar:</span>
+              <span className="font-medium">{t('payment.total')}:</span>
               <span className="text-2xl font-bold text-primary">{formatCurrency(finalAmount)}</span>
             </div>
             {isMultipleMonths && (
               <p className="text-xs text-muted-foreground mt-1">
-                {monthsCount[0]} {monthsCount[0] === 1 ? 'mes' : 'meses'} de mensualidad
+                {monthsCount[0]} {monthsCount[0] === 1 ? t('payment.month') : t('payment.months')} {t('payment.ofMonthlyFee')}
               </p>
             )}
           </div>
 
           {/* Payment Methods Grid */}
           <div className="space-y-3">
-            <Label>Método de pago</Label>
+            <Label>{t('payment.selectMethod')}</Label>
             <div className="grid grid-cols-2 gap-2">
               {activePaymentMethods.map((method) => {
                 const Icon = iconMap[method.icono] || Wallet;
@@ -277,11 +281,11 @@ export function PaymentModal({
           {/* Reference Field */}
           <div className="space-y-2">
             <Label htmlFor="referencia">
-              Referencia / Comprobante <span className="text-muted-foreground">(opcional)</span>
+              {t('payment.reference')} <span className="text-muted-foreground">({t('common.optional')})</span>
             </Label>
             <Input
               id="referencia"
-              placeholder="Ej: #12345 o número de transacción"
+              placeholder={t('payment.referencePlaceholder')}
               value={referencia}
               onChange={(e) => setReferencia(e.target.value)}
             />
@@ -290,11 +294,11 @@ export function PaymentModal({
           {/* Observations Field */}
           <div className="space-y-2">
             <Label htmlFor="observaciones">
-              Observaciones <span className="text-muted-foreground">(opcional)</span>
+              {t('payment.observations')} <span className="text-muted-foreground">({t('common.optional')})</span>
             </Label>
             <Textarea
               id="observaciones"
-              placeholder="Notas adicionales sobre el pago"
+              placeholder={t('payment.observationsPlaceholder')}
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
               rows={2}
@@ -308,14 +312,14 @@ export function PaymentModal({
             className="flex-1"
             onClick={handleClose}
           >
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button
             className="flex-1 gradient-primary"
             disabled={!selectedMethod}
             onClick={handleConfirm}
           >
-            Confirmar Pago
+            {t('payment.confirmPayment')}
           </Button>
         </div>
       </DialogContent>

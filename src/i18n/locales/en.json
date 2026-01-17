@@ -18,7 +18,9 @@
     "none": "None",
     "active": "Active",
     "inactive": "Inactive",
-    "custom": "Custom"
+    "custom": "Custom",
+    "optional": "optional",
+    "example": "Ex"
   },
   "nav": {
     "dashboard": "Home",
@@ -65,7 +67,11 @@
     "registerPayment": "Register payment",
     "identification": "ID",
     "birthDate": "Birth date",
-    "referredBy": "Referred by"
+    "referredBy": "Referred by",
+    "markPending": "Mark Pending",
+    "markInactive": "Mark Inactive",
+    "call": "Call",
+    "sendEmail": "Send Email"
   },
   "staff": {
     "title": "Staff",
@@ -117,14 +123,22 @@
   "payment": {
     "registerPayment": "Register Payment",
     "monthlyFee": "Monthly fee",
-    "multipleMonths": "Multiple months",
+    "paymentType": "Payment type",
+    "multipleMonths": "Pay multiple months",
+    "monthCount": "Number of months",
+    "month": "month",
     "months": "months",
-    "customAmount": "Custom amount",
-    "selectMethod": "Select payment method",
-    "reference": "Reference",
+    "calculatedAmount": "Calculated amount",
+    "customAmount": "Custom amount (promotions/discounts)",
+    "selectMethod": "Payment method",
+    "reference": "Reference / Receipt",
+    "referencePlaceholder": "Ex: #12345 or transaction number",
     "observations": "Notes",
-    "total": "Total",
-    "nextPaymentDate": "Next payment"
+    "observationsPlaceholder": "Additional notes about the payment",
+    "total": "Total to pay",
+    "ofMonthlyFee": "of monthly fee",
+    "nextPaymentDate": "Next payment will be",
+    "confirmPayment": "Confirm Payment"
   },
   "status": {
     "upToDate": "Up to date",
