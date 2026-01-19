@@ -47,7 +47,7 @@ type NestedKeyOf<ObjectType extends object> = {
 
 export type TranslationKey = NestedKeyOf<typeof es>;
 
-export function t(translations: typeof es, key: string): string {
+export function t(translations: typeof es, key: string, params?: Record<string, string>): string {
   const keys = key.split('.');
   let result: any = translations;
   
@@ -59,7 +59,16 @@ export function t(translations: typeof es, key: string): string {
     }
   }
   
-  return typeof result === 'string' ? result : key;
+  if (typeof result !== 'string') {
+    return key;
+  }
+  
+  // Replace placeholders like {{count}} with actual values
+  if (params) {
+    return result.replace(/\{\{(\w+)\}\}/g, (_, paramKey) => params[paramKey] || `{{${paramKey}}}`);
+  }
+  
+  return result;
 }
 
 export { es, en, fr, pt };

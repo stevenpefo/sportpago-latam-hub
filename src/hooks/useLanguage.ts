@@ -21,7 +21,7 @@ export function useLanguage() {
     setLanguageState(newLanguage);
   }, []);
 
-  const t = useCallback((key: string) => translate(translations, key), [translations]);
+  const t = useCallback((key: string, params?: Record<string, string>) => translate(translations, key, params), [translations]);
 
   useEffect(() => {
     // Update document lang attribute
