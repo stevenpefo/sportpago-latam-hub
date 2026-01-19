@@ -8,9 +8,10 @@ import {
 } from '@/components/ui/popover';
 import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS, fr, ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { DateRange } from 'react-day-picker';
+import { useLanguage } from '@/hooks/useLanguage';
 
 type FilterPreset = 'this-month' | 'last-month' | 'custom' | 'all';
 
@@ -19,10 +20,20 @@ interface DateRangeFilterProps {
   onDateRangeChange: (range: DateRange | undefined) => void;
 }
 
+const dateLocales = {
+  es: es,
+  en: enUS,
+  fr: fr,
+  pt: ptBR,
+};
+
 export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilterProps) {
   const [open, setOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<FilterPreset>('this-month');
   const [showCalendar, setShowCalendar] = useState(false);
+  const { t, language } = useLanguage();
+
+  const currentLocale = dateLocales[language as keyof typeof dateLocales] || es;
 
   const handlePresetClick = (preset: FilterPreset) => {
     setActivePreset(preset);
@@ -65,13 +76,13 @@ export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilte
   };
 
   const getButtonLabel = () => {
-    if (!dateRange?.from) return 'Todas las fechas';
-    if (activePreset === 'this-month') return 'Este mes';
-    if (activePreset === 'last-month') return 'Mes anterior';
+    if (!dateRange?.from) return t('filters.allDates');
+    if (activePreset === 'this-month') return t('filters.thisMonth');
+    if (activePreset === 'last-month') return t('filters.lastMonth');
     if (dateRange.from && dateRange.to) {
-      return `${format(dateRange.from, 'dd MMM', { locale: es })} - ${format(dateRange.to, 'dd MMM', { locale: es })}`;
+      return `${format(dateRange.from, 'dd MMM', { locale: currentLocale })} - ${format(dateRange.to, 'dd MMM', { locale: currentLocale })}`;
     }
-    return format(dateRange.from, 'dd MMM yyyy', { locale: es });
+    return format(dateRange.from, 'dd MMM yyyy', { locale: currentLocale });
   };
 
   return (
@@ -95,7 +106,7 @@ export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilte
             className="w-full justify-start"
             onClick={() => handlePresetClick('this-month')}
           >
-            Este mes
+            {t('filters.thisMonth')}
           </Button>
           <Button
             variant={activePreset === 'last-month' ? 'secondary' : 'ghost'}
@@ -103,7 +114,7 @@ export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilte
             className="w-full justify-start"
             onClick={() => handlePresetClick('last-month')}
           >
-            Mes anterior
+            {t('filters.lastMonth')}
           </Button>
           <Button
             variant={activePreset === 'custom' ? 'secondary' : 'ghost'}
@@ -111,7 +122,7 @@ export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilte
             className="w-full justify-start"
             onClick={() => handlePresetClick('custom')}
           >
-            Rango personalizado
+            {t('filters.customRange')}
           </Button>
           <Button
             variant={activePreset === 'all' ? 'secondary' : 'ghost'}
@@ -119,7 +130,7 @@ export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilte
             className="w-full justify-start"
             onClick={() => handlePresetClick('all')}
           >
-            Todas las fechas
+            {t('filters.allDates')}
           </Button>
         </div>
         
@@ -131,6 +142,7 @@ export function DateRangeFilter({ dateRange, onDateRangeChange }: DateRangeFilte
             selected={dateRange}
             onSelect={handleCalendarSelect}
             numberOfMonths={1}
+            locale={currentLocale}
             className={cn("p-3 pointer-events-auto")}
           />
         )}

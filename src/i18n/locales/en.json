@@ -213,5 +213,15 @@
     "selectAtLeastOne": "Select at least one athlete",
     "pricesUpdated": "Prices updated",
     "updatedDescription": "Updated price for {{count}} athlete(s) to {{price}}"
+  },
+  "filters": {
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "customRange": "Custom range",
+    "allDates": "All dates",
+    "paymentMethod": "Payment method",
+    "filterByMethod": "Filter by method",
+    "allMethods": "All methods",
+    "clear": "Clear"
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +9,7 @@ import {
 import { PaymentMethod } from '@/types';
 import { Filter, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface PaymentMethodFilterProps {
   paymentMethods: PaymentMethod[];
@@ -22,6 +23,7 @@ export function PaymentMethodFilter({
   onFilterChange,
 }: PaymentMethodFilterProps) {
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
   const handleToggleMethod = (methodId: string) => {
     if (selectedMethods.includes(methodId)) {
@@ -55,7 +57,7 @@ export function PaymentMethodFilter({
           className="gap-2"
         >
           <Filter className="h-4 w-4" />
-          Método de pago
+          {t('filters.paymentMethod')}
           {activeMethodsCount > 0 && (
             <Badge variant="secondary" className="ml-1 h-5 px-1.5">
               {activeMethodsCount}
@@ -66,7 +68,7 @@ export function PaymentMethodFilter({
       <PopoverContent className="w-64 p-0" align="start">
         <div className="p-3 border-b">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground">Filtrar por método</span>
+            <span className="text-sm font-medium text-foreground">{t('filters.filterByMethod')}</span>
             {activeMethodsCount > 0 && (
               <Button 
                 variant="ghost" 
@@ -75,7 +77,7 @@ export function PaymentMethodFilter({
                 onClick={handleClearAll}
               >
                 <X className="h-3 w-3 mr-1" />
-                Limpiar
+                {t('filters.clear')}
               </Button>
             )}
           </div>
@@ -92,7 +94,7 @@ export function PaymentMethodFilter({
               onCheckedChange={handleSelectAll}
             />
             <span className="text-sm font-medium text-foreground">
-              Todos los métodos
+              {t('filters.allMethods')}
             </span>
           </div>
 
