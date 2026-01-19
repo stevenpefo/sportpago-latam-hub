@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Athlete } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/useLanguage';
 import { DollarSign, Users, CheckSquare, Square } from 'lucide-react';
 
 interface BulkPriceModalProps {
@@ -31,6 +32,7 @@ export function BulkPriceModal({
   onConfirm,
 }: BulkPriceModalProps) {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [newPrice, setNewPrice] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,8 +67,8 @@ export function BulkPriceModal({
     const price = parseFloat(newPrice);
     if (isNaN(price) || price <= 0) {
       toast({
-        title: 'Precio inválido',
-        description: 'Por favor ingresa un precio válido',
+        title: t('bulkPrice.invalidPrice'),
+        description: t('bulkPrice.enterValidPrice'),
         variant: 'destructive',
       });
       return;
@@ -74,8 +76,8 @@ export function BulkPriceModal({
 
     if (selectedIds.size === 0) {
       toast({
-        title: 'Sin selección',
-        description: 'Selecciona al menos un deportista',
+        title: t('bulkPrice.noSelection'),
+        description: t('bulkPrice.selectAtLeastOne'),
         variant: 'destructive',
       });
       return;
@@ -83,8 +85,11 @@ export function BulkPriceModal({
 
     onConfirm(Array.from(selectedIds), price);
     toast({
-      title: 'Precios actualizados',
-      description: `Se actualizó el precio de ${selectedIds.size} deportista(s) a ${currencySymbol}${price.toLocaleString()}`,
+      title: t('bulkPrice.pricesUpdated'),
+      description: t('bulkPrice.updatedDescription', { 
+        count: selectedIds.size.toString(), 
+        price: `${currencySymbol}${price.toLocaleString()}` 
+      }),
     });
     handleClose();
   };
@@ -105,21 +110,21 @@ export function BulkPriceModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-primary" />
-            Modificar Precios
+            {t('bulkPrice.title')}
           </DialogTitle>
           <DialogDescription>
-            Selecciona los deportistas y establece el nuevo precio mensual
+            {t('bulkPrice.description')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           {/* New Price Input */}
           <div className="space-y-2">
-            <Label htmlFor="newPrice">Nuevo precio mensual ({currencySymbol})</Label>
+            <Label htmlFor="newPrice">{t('bulkPrice.newMonthlyPrice')} ({currencySymbol})</Label>
             <Input
               id="newPrice"
               type="number"
-              placeholder="Ej: 150000"
+              placeholder={t('bulkPrice.placeholder')}
               value={newPrice}
               onChange={(e) => setNewPrice(e.target.value)}
             />
@@ -127,7 +132,7 @@ export function BulkPriceModal({
 
           {/* Search */}
           <Input
-            placeholder="Buscar deportista..."
+            placeholder={t('bulkPrice.searchAthlete')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -146,10 +151,10 @@ export function BulkPriceModal({
               ) : (
                 <Square className="h-5 w-5 text-muted-foreground" />
               )}
-              Seleccionar todos
+              {t('bulkPrice.selectAll')}
             </button>
             <span className="text-sm text-muted-foreground">
-              {selectedIds.size} de {athletes.length} seleccionados
+              {t('bulkPrice.selectedOf', { selected: selectedIds.size.toString(), total: athletes.length.toString() })}
             </span>
           </div>
 
@@ -175,7 +180,7 @@ export function BulkPriceModal({
                       {athlete.nombre}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {athlete.deporte} • Actual: {currencySymbol}{athlete.montoMensual.toLocaleString()}
+                      {athlete.deporte} • {t('bulkPrice.current')}: {currencySymbol}{athlete.montoMensual.toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -189,7 +194,10 @@ export function BulkPriceModal({
               <div className="flex items-center gap-2 text-sm">
                 <Users className="h-4 w-4 text-primary" />
                 <span className="font-medium text-foreground">
-                  Aplicar {currencySymbol}{parseFloat(newPrice).toLocaleString()} a {selectedIds.size} deportista(s)
+                  {t('bulkPrice.applySummary', { 
+                    price: `${currencySymbol}${parseFloat(newPrice).toLocaleString()}`, 
+                    count: selectedIds.size.toString() 
+                  })}
                 </span>
               </div>
             </div>
@@ -198,14 +206,14 @@ export function BulkPriceModal({
 
         <div className="flex gap-3 pt-4 border-t">
           <Button variant="outline" className="flex-1" onClick={handleClose}>
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button
             className="flex-1 gradient-primary"
             onClick={handleConfirm}
             disabled={selectedIds.size === 0 || !newPrice}
           >
-            Confirmar cambios
+            {t('bulkPrice.confirmChanges')}
           </Button>
         </div>
       </DialogContent>

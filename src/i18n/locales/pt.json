@@ -195,5 +195,23 @@
     "US": "Estados Unidos",
     "UY": "Uruguai",
     "VE": "Venezuela"
+  },
+  "bulkPrice": {
+    "title": "Modificar Preços",
+    "description": "Selecione os atletas e defina o novo preço mensal",
+    "newMonthlyPrice": "Novo preço mensal",
+    "placeholder": "Ex: 150000",
+    "searchAthlete": "Pesquisar atleta...",
+    "selectAll": "Selecionar todos",
+    "selectedOf": "{{selected}} de {{total}} selecionados",
+    "current": "Atual",
+    "applySummary": "Aplicar {{price}} a {{count}} atleta(s)",
+    "confirmChanges": "Confirmar alterações",
+    "invalidPrice": "Preço inválido",
+    "enterValidPrice": "Por favor insira um preço válido",
+    "noSelection": "Sem seleção",
+    "selectAtLeastOne": "Selecione pelo menos um atleta",
+    "pricesUpdated": "Preços atualizados",
+    "updatedDescription": "Preço de {{count}} atleta(s) atualizado para {{price}}"
   }
 }
