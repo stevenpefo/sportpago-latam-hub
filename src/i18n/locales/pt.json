@@ -213,5 +213,15 @@
     "selectAtLeastOne": "Selecione pelo menos um atleta",
     "pricesUpdated": "Preços atualizados",
     "updatedDescription": "Preço de {{count}} atleta(s) atualizado para {{price}}"
+  },
+  "filters": {
+    "thisMonth": "Este mês",
+    "lastMonth": "Mês anterior",
+    "customRange": "Intervalo personalizado",
+    "allDates": "Todas as datas",
+    "paymentMethod": "Método de pagamento",
+    "filterByMethod": "Filtrar por método",
+    "allMethods": "Todos os métodos",
+    "clear": "Limpar"
   }
 }
