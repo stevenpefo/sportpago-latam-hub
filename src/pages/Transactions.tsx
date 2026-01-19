@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useApp } from '@/context/AppContext';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage } from '@/hooks/useLanguage';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Receipt, TrendingUp, Calendar, Banknote, FileText, Download } from 'lucide-react';
@@ -11,13 +11,22 @@ import { DateRangeFilter } from '@/components/transactions/DateRangeFilter';
 import { AthleteDetailModal } from '@/components/athletes/AthleteDetailModal';
 import { exportTransactionsToExcel } from '@/utils/exportToExcel';
 import { DateRange } from 'react-day-picker';
-import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval, format } from 'date-fns';
+import { es, enUS, fr, ptBR } from 'date-fns/locale';
 import { Athlete } from '@/types';
+
+const dateLocales = {
+  es: es,
+  en: enUS,
+  fr: fr,
+  pt: ptBR,
+};
 
 export default function Transactions() {
   const { transactions, athletes, establecimiento } = useApp();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const currencySymbol = establecimiento?.simboloMoneda || '$';
+  const currentLocale = dateLocales[language as keyof typeof dateLocales] || es;
 
   const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -32,13 +41,7 @@ export default function Transactions() {
   };
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return format(new Date(date), 'dd MMM yyyy, HH:mm', { locale: currentLocale });
   };
 
   // Filter and sort transactions
@@ -81,7 +84,7 @@ export default function Transactions() {
   };
 
   const getAthleteName = (athleteId: string) => {
-    return getAthlete(athleteId)?.nombre || 'Deportista';
+    return getAthlete(athleteId)?.nombre || t('athletes.title');
   };
 
   const getPaymentMethodName = (methodId: string) => {
@@ -114,7 +117,7 @@ export default function Transactions() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">{t('transactions.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              {t('transactions.title')}
+              {t('transactions.subtitle')}
             </p>
           </div>
           <Button 
@@ -132,13 +135,13 @@ export default function Transactions() {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           <StatsCard
-            title={t('payment.total')}
+            title={t('transactions.totalAmount')}
             value={formatCurrency(stats.amount)}
             icon={<TrendingUp className="h-5 w-5" />}
             variant="success"
           />
           <StatsCard
-            title={t('transactions.title')}
+            title={t('transactions.transactionCount')}
             value={stats.total}
             icon={<Receipt className="h-5 w-5" />}
           />
@@ -161,7 +164,7 @@ export default function Transactions() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-foreground">
-              {t('transactions.title')}
+              {t('transactions.history')}
             </h2>
             <span className="text-sm text-muted-foreground">
               {filteredTransactions.length}
@@ -171,7 +174,7 @@ export default function Transactions() {
           {filteredTransactions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Receipt className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>{t('transactions.title')}</p>
+              <p>{t('transactions.noTransactions')}</p>
             </div>
           ) : (
             filteredTransactions.map((transaction) => (
