@@ -111,6 +111,7 @@
   },
   "transactions": {
     "title": "Transactions",
+    "subtitle": "Historique des paiements et mouvements",
     "date": "Date",
     "amount": "Montant",
     "paymentMethod": "Méthode de paiement",
@@ -118,7 +119,11 @@
     "reference": "Référence",
     "observations": "Observations",
     "monthsPaid": "Mois payés",
-    "export": "Exporter"
+    "export": "Exporter",
+    "totalAmount": "Total perçu",
+    "transactionCount": "Transactions",
+    "history": "Historique",
+    "noTransactions": "Aucune transaction pour cette période"
   },
   "payment": {
     "registerPayment": "Enregistrer Paiement",
