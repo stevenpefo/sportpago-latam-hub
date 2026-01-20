@@ -6,12 +6,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useApp } from '@/context/AppContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { KeyRound, Mail, Lock, User } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, loginStaff } = useApp();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [adminEmail, setAdminEmail] = useState('');
@@ -27,14 +29,14 @@ export default function Login() {
       const success = await login(adminEmail, adminPassword);
       if (success) {
         toast({
-          title: '¡Bienvenido!',
-          description: 'Has iniciado sesión correctamente',
+          title: t('login.welcomeBack'),
+          description: t('login.loginSuccess'),
         });
         navigate('/dashboard');
       } else {
         toast({
-          title: 'Error',
-          description: 'Credenciales incorrectas',
+          title: t('common.error'),
+          description: t('login.invalidCredentials'),
           variant: 'destructive',
         });
       }
@@ -51,14 +53,14 @@ export default function Login() {
       const success = await loginStaff(staffCode);
       if (success) {
         toast({
-          title: '¡Bienvenido!',
-          description: 'Has iniciado sesión como asistente',
+          title: t('login.welcomeBack'),
+          description: t('login.staffLoginSuccess'),
         });
         navigate('/dashboard');
       } else {
         toast({
-          title: 'Error',
-          description: 'Código de acceso incorrecto',
+          title: t('common.error'),
+          description: t('login.invalidCode'),
           variant: 'destructive',
         });
       }
@@ -75,7 +77,7 @@ export default function Login() {
           <span className="text-primary-foreground font-bold text-2xl">SP</span>
         </div>
         <h1 className="text-3xl font-bold text-foreground">SportPago</h1>
-        <p className="text-muted-foreground mt-1">Gestión de pagos deportivos</p>
+        <p className="text-muted-foreground mt-1">{t('login.tagline')}</p>
       </div>
 
       {/* Login Card */}
@@ -85,11 +87,11 @@ export default function Login() {
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="admin" className="gap-2">
                 <User className="h-4 w-4" />
-                Administrador
+                {t('login.admin')}
               </TabsTrigger>
               <TabsTrigger value="staff" className="gap-2">
                 <KeyRound className="h-4 w-4" />
-                Asistente
+                {t('login.assistant')}
               </TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -98,13 +100,13 @@ export default function Login() {
             <TabsContent value="admin" className="mt-0">
               <form onSubmit={handleAdminLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Correo electrónico</Label>
+                  <Label htmlFor="email">{t('auth.email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder={t('login.emailPlaceholder')}
                       value={adminEmail}
                       onChange={(e) => setAdminEmail(e.target.value)}
                       className="pl-10"
@@ -114,7 +116,7 @@ export default function Login() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <Label htmlFor="password">{t('auth.password')}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -134,13 +136,13 @@ export default function Login() {
                   className="w-full gradient-primary"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+                  {isLoading ? t('login.loggingIn') : t('auth.login')}
                 </Button>
 
                 <p className="text-center text-sm text-muted-foreground">
-                  ¿No tienes cuenta?{' '}
+                  {t('auth.noAccount')}{' '}
                   <Button variant="link" className="p-0 h-auto text-primary">
-                    Regístrate aquí
+                    {t('login.signUpHere')}
                   </Button>
                 </p>
               </form>
@@ -149,9 +151,9 @@ export default function Login() {
             <TabsContent value="staff" className="mt-0">
               <form onSubmit={handleStaffLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="code">Código de acceso</Label>
+                  <Label htmlFor="code">{t('login.accessCode')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Ingresa el código de 6 dígitos proporcionado por tu administrador
+                    {t('login.accessCodeDesc')}
                   </p>
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -173,11 +175,11 @@ export default function Login() {
                   className="w-full gradient-primary"
                   disabled={isLoading || staffCode.length !== 6}
                 >
-                  {isLoading ? 'Verificando...' : 'Acceder'}
+                  {isLoading ? t('login.verifying') : t('login.access')}
                 </Button>
 
                 <p className="text-center text-xs text-muted-foreground">
-                  Código de demo: <span className="font-mono font-bold">123456</span>
+                  {t('login.demoCode')}: <span className="font-mono font-bold">123456</span>
                 </p>
               </form>
             </TabsContent>
@@ -187,7 +189,7 @@ export default function Login() {
 
       {/* Footer */}
       <p className="mt-8 text-center text-xs text-muted-foreground">
-        SportPago © 2025 • Gestión de pagos para academias deportivas
+        SportPago © 2025 • {t('login.footerTagline')}
       </p>
     </div>
   );

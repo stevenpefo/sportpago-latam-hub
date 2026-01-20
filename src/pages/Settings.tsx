@@ -80,7 +80,7 @@ export default function Settings() {
       updateEnabledSports(enabledSports.filter(s => s !== sport));
     }
     toast({
-      title: checked ? 'Deporte activado' : 'Deporte desactivado',
+      title: checked ? t('settings.sportActivated') : t('settings.sportDeactivated'),
       description: sport,
     });
   };
@@ -99,8 +99,8 @@ export default function Settings() {
     // Check if sport already exists
     if (allSports.some(s => s.toLowerCase() === newSportName.trim().toLowerCase())) {
       toast({
-        title: 'Deporte ya existe',
-        description: 'Este deporte ya está en la lista',
+        title: t('settings.sportExists'),
+        description: t('settings.sportExistsDesc'),
         variant: 'destructive',
       });
       return;
@@ -108,8 +108,8 @@ export default function Settings() {
 
     addCustomSport(newSportName.trim());
     toast({
-      title: 'Deporte agregado',
-      description: `${newSportName} ahora está disponible`,
+      title: t('settings.sportAdded'),
+      description: `${newSportName}`,
     });
     setNewSportName('');
     setAddSportOpen(false);
@@ -118,7 +118,7 @@ export default function Settings() {
   const handleDeleteCustomSport = (sport: string) => {
     deleteCustomSport(sport);
     toast({
-      title: 'Deporte eliminado',
+      title: t('settings.sportDeleted'),
       description: sport,
     });
   };
@@ -138,8 +138,8 @@ export default function Settings() {
         simboloMoneda: country.currencySymbol,
       });
       toast({
-        title: 'País actualizado',
-        description: `Moneda configurada: ${country.currencySymbol} (${country.currency})`,
+        title: t('settings.countryUpdated'),
+        description: `${country.currencySymbol} (${country.currency})`,
       });
     }
   };
@@ -170,8 +170,8 @@ export default function Settings() {
     setAddMethodOpen(false);
     
     toast({
-      title: 'Método agregado',
-      description: `${newMethodName} ahora está disponible`,
+      title: t('settings.methodAdded'),
+      description: newMethodName,
     });
   };
 
@@ -183,7 +183,7 @@ export default function Settings() {
     );
     
     toast({
-      title: 'Método eliminado',
+      title: t('settings.methodDeleted'),
     });
   };
 
@@ -194,9 +194,9 @@ export default function Settings() {
       <div className="p-4 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Configuración</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('settings.title')}</h1>
           <p className="text-sm text-muted-foreground">
-            Configura tu establecimiento
+            {t('settings.subtitle')}
           </p>
         </div>
 
@@ -205,20 +205,20 @@ export default function Settings() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Building2 className="h-5 w-5 text-primary" />
-              Establecimiento
+              {t('settings.establishment')}
             </CardTitle>
             <CardDescription>
-              Información general de tu academia o club
+              {t('settings.establishmentDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="nombre">Nombre</Label>
+              <Label htmlFor="nombre">{t('settings.name')}</Label>
               <Input
                 id="nombre"
                 value={establecimiento?.nombre || ''}
                 onChange={(e) => setupEstablecimiento({ nombre: e.target.value })}
-                placeholder="Mi Academia Deportiva"
+                placeholder={t('settings.namePlaceholder')}
               />
             </div>
           </CardContent>
@@ -236,21 +236,21 @@ export default function Settings() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Globe className="h-5 w-5 text-primary" />
-              País y Moneda
+              {t('settings.countryAndCurrency')}
             </CardTitle>
             <CardDescription>
-              Configura tu ubicación y moneda local
+              {t('settings.countryAndCurrencyDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>País</Label>
+              <Label>{t('settings.country')}</Label>
               <Select
                 value={establecimiento?.pais || ''}
                 onValueChange={handleCountryChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar país" />
+                  <SelectValue placeholder={t('settings.selectCountry')} />
                 </SelectTrigger>
                 <SelectContent>
                   {COUNTRIES.map((country) => (
@@ -267,7 +267,7 @@ export default function Settings() {
 
             {currentCountry && (
               <div className="bg-muted/50 rounded-lg p-3">
-                <p className="text-sm text-muted-foreground">Moneda configurada:</p>
+                <p className="text-sm text-muted-foreground">{t('settings.configuredCurrency')}:</p>
                 <p className="text-lg font-semibold">
                   {currentCountry.currencySymbol} ({currentCountry.currency})
                 </p>
@@ -283,10 +283,10 @@ export default function Settings() {
               <div className="min-w-0 flex-1">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Dumbbell className="h-5 w-5 text-primary" />
-                  Deportes de mi Academia
+                  {t('settings.sports')}
                 </CardTitle>
                 <CardDescription>
-                  Selecciona o crea los deportes que ofrece tu academia
+                  {t('settings.sportsDesc')}
                 </CardDescription>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -294,18 +294,18 @@ export default function Settings() {
                   <DialogTrigger asChild>
                     <Button size="sm" variant="outline" className="min-h-[44px]">
                       <Plus className="h-4 w-4 mr-1" />
-                      <span className="hidden sm:inline">Crear</span>
+                      <span className="hidden sm:inline">{t('settings.createSport')}</span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[400px] mx-4">
                     <DialogHeader>
-                      <DialogTitle>Nuevo Deporte</DialogTitle>
+                      <DialogTitle>{t('settings.newSport')}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label>Nombre del deporte</Label>
+                        <Label>{t('settings.sportName')}</Label>
                         <Input
-                          placeholder="Ej: Patinaje, Escalada, Parkour..."
+                          placeholder={t('settings.sportNamePlaceholder')}
                           value={newSportName}
                           onChange={(e) => setNewSportName(e.target.value)}
                           className="min-h-[44px]"
@@ -318,14 +318,14 @@ export default function Settings() {
                         className="flex-1 min-h-[44px]"
                         onClick={() => setAddSportOpen(false)}
                       >
-                        Cancelar
+                        {t('common.cancel')}
                       </Button>
                       <Button
                         className="flex-1 gradient-primary min-h-[44px]"
                         onClick={handleAddCustomSport}
                         disabled={!newSportName.trim()}
                       >
-                        Agregar
+                        {t('common.add')}
                       </Button>
                     </div>
                   </DialogContent>
@@ -336,7 +336,7 @@ export default function Settings() {
                   onClick={handleSelectAllSports}
                   className="min-h-[44px] hidden sm:flex"
                 >
-                  {enabledSports.length === allSports.length ? 'Quitar todos' : 'Todos'}
+                  {enabledSports.length === allSports.length ? t('settings.removeAll') : t('common.all')}
                 </Button>
               </div>
             </div>
@@ -345,7 +345,7 @@ export default function Settings() {
             {/* Custom Sports Section */}
             {customSports.length > 0 && (
               <div className="mb-4">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Deportes personalizados</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">{t('settings.customSports')}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {customSports.map((sport) => {
                     const isEnabled = enabledSports.includes(sport);
@@ -389,7 +389,7 @@ export default function Settings() {
             {/* Predefined Sports */}
             <div>
               {customSports.length > 0 && (
-                <p className="text-xs font-medium text-muted-foreground mb-2">Deportes predefinidos</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">{t('settings.predefinedSports')}</p>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {SPORTS.filter(s => s !== 'Otros').map((sport) => {
@@ -422,7 +422,7 @@ export default function Settings() {
             
             {enabledSports.length === 0 && (
               <p className="text-xs text-muted-foreground mt-3 text-center">
-                💡 Si no seleccionas ninguno, se mostrarán todos los deportes
+                💡 {t('settings.noSportsHint')}
               </p>
             )}
           </CardContent>
@@ -435,10 +435,10 @@ export default function Settings() {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <CreditCard className="h-5 w-5 text-primary" />
-                  Métodos de Pago
+                  {t('settings.paymentMethods')}
                 </CardTitle>
                 <CardDescription>
-                  Activa los métodos de pago disponibles
+                  {t('settings.paymentMethodsDesc')}
                 </CardDescription>
               </div>
               
@@ -446,25 +446,25 @@ export default function Settings() {
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline">
                     <Plus className="h-4 w-4 mr-1" />
-                    Agregar
+                    {t('common.add')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[400px] mx-4">
                   <DialogHeader>
-                    <DialogTitle>Nuevo Método de Pago</DialogTitle>
+                    <DialogTitle>{t('settings.newPaymentMethod')}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label>Nombre</Label>
+                      <Label>{t('settings.name')}</Label>
                       <Input
-                        placeholder="Ej: Nequi, Mercado Pago, Yape..."
+                        placeholder={t('settings.paymentMethodPlaceholder')}
                         value={newMethodName}
                         onChange={(e) => setNewMethodName(e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Ícono</Label>
+                      <Label>{t('settings.icon')}</Label>
                       <div className="grid grid-cols-5 gap-2">
                         {Object.entries(iconMap).map(([key, Icon]) => (
                           <button
@@ -494,14 +494,14 @@ export default function Settings() {
                       className="flex-1"
                       onClick={() => setAddMethodOpen(false)}
                     >
-                      Cancelar
+                      {t('common.cancel')}
                     </Button>
                     <Button
                       className="flex-1 gradient-primary"
                       onClick={handleAddPaymentMethod}
                       disabled={!newMethodName.trim()}
                     >
-                      Agregar
+                      {t('common.add')}
                     </Button>
                   </div>
                 </DialogContent>
@@ -525,7 +525,7 @@ export default function Settings() {
                       <div>
                         <p className="font-medium text-foreground">{method.nombre}</p>
                         {method.esPersonalizado && (
-                          <p className="text-xs text-muted-foreground">Personalizado</p>
+                          <p className="text-xs text-muted-foreground">{t('common.custom')}</p>
                         )}
                       </div>
                     </div>
@@ -573,7 +573,7 @@ export default function Settings() {
                     setLanguage(lang.code);
                     toast({
                       title: lang.nativeName,
-                      description: `Language changed to ${lang.name}`,
+                      description: lang.name,
                     });
                   }}
                   className={cn(
