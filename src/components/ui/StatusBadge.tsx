@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { SystemStatus, ManualStatus } from '@/types';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface StatusBadgeProps {
   status: SystemStatus | ManualStatus;
@@ -10,39 +11,40 @@ interface StatusBadgeProps {
 const statusConfig = {
   // System statuses
   'al-dia': {
-    label: 'Al día',
+    labelKey: 'status.upToDate',
     className: 'bg-status-success-light text-status-success border-status-success/20',
     dot: 'bg-status-success',
   },
   'por-vencer': {
-    label: 'Por vencer',
+    labelKey: 'status.aboutToExpire',
     className: 'bg-status-warning-light text-status-warning border-status-warning/20',
     dot: 'bg-status-warning',
   },
   'vencido': {
-    label: 'Vencido',
+    labelKey: 'status.expired',
     className: 'bg-status-danger-light text-status-danger border-status-danger/20',
     dot: 'bg-status-danger',
   },
   // Manual statuses
   'pagado': {
-    label: 'Pagado',
+    labelKey: 'status.paid',
     className: 'bg-status-success-light text-status-success border-status-success/20',
     dot: 'bg-status-success',
   },
   'pendiente': {
-    label: 'Pendiente',
+    labelKey: 'status.pending',
     className: 'bg-status-warning-light text-status-warning border-status-warning/20',
     dot: 'bg-status-warning',
   },
   'inactivo': {
-    label: 'Inactivo',
+    labelKey: 'status.inactive',
     className: 'bg-status-inactive-light text-status-inactive border-status-inactive/20',
     dot: 'bg-status-inactive',
   },
 };
 
 export function StatusBadge({ status, type = 'system', className }: StatusBadgeProps) {
+  const { t } = useLanguage();
   const config = statusConfig[status];
   
   return (
@@ -54,7 +56,7 @@ export function StatusBadge({ status, type = 'system', className }: StatusBadgeP
       )}
     >
       <span className={cn('w-1.5 h-1.5 rounded-full', config.dot)} />
-      {config.label}
+      {t(config.labelKey)}
     </span>
   );
 }
