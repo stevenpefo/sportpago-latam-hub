@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageIcon, Upload, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 
 interface LogoUploadProps {
@@ -16,6 +17,7 @@ const ACCEPTED_FORMATS = ['image/jpeg', 'image/png', 'image/svg+xml'];
 
 export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: LogoUploadProps) {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentLogoUrl || null);
   const [isUploading, setIsUploading] = useState(false);
@@ -25,8 +27,8 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
     // Validate file type
     if (!ACCEPTED_FORMATS.includes(file.type)) {
       toast({
-        title: 'Formato no válido',
-        description: 'Solo se permiten archivos JPG, PNG o SVG',
+        title: t('logoUpload.invalidFormat'),
+        description: t('logoUpload.allowedFormats'),
         variant: 'destructive',
       });
       return;
@@ -35,8 +37,8 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       toast({
-        title: 'Archivo muy grande',
-        description: 'El tamaño máximo es 2MB',
+        title: t('logoUpload.fileTooLarge'),
+        description: t('logoUpload.maxSize'),
         variant: 'destructive',
       });
       return;
@@ -59,14 +61,14 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
       onLogoChange(objectUrl);
       
       toast({
-        title: 'Logo actualizado',
-        description: 'El logo se ha guardado correctamente',
+        title: t('logoUpload.logoUpdated'),
+        description: t('logoUpload.logoSaved'),
       });
     } catch (error) {
       console.error('Error uploading logo:', error);
       toast({
-        title: 'Error al subir',
-        description: 'No se pudo subir el logo. Intenta de nuevo.',
+        title: t('logoUpload.uploadError'),
+        description: t('logoUpload.tryAgain'),
         variant: 'destructive',
       });
     } finally {
@@ -107,7 +109,7 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
       fileInputRef.current.value = '';
     }
     toast({
-      title: 'Logo eliminado',
+      title: t('logoUpload.logoRemoved'),
     });
   };
 
@@ -116,10 +118,10 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <ImageIcon className="h-5 w-5 text-primary" />
-          Logo del Club
+          {t('logoUpload.clubLogo')}
         </CardTitle>
         <CardDescription>
-          Sube el logo de tu academia (JPG, PNG o SVG, máximo 2MB)
+          {t('logoUpload.uploadDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -137,7 +139,7 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
             <div className="relative w-32 h-32 mx-auto">
               <img
                 src={previewUrl}
-                alt="Logo del club"
+                alt={t('logoUpload.clubLogoAlt')}
                 className="w-full h-full object-contain rounded-lg border bg-background"
               />
               <Button
@@ -161,7 +163,7 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
                 ) : (
                   <Upload className="h-4 w-4 mr-2" />
                 )}
-                Cambiar logo
+                {t('logoUpload.changeLogo')}
               </Button>
             </div>
           </div>
@@ -181,7 +183,7 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
             {isUploading ? (
               <div className="flex flex-col items-center gap-2">
                 <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                <p className="text-sm text-muted-foreground">Subiendo...</p>
+                <p className="text-sm text-muted-foreground">{t('logoUpload.uploading')}</p>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2">
@@ -189,9 +191,9 @@ export function LogoUpload({ currentLogoUrl, onLogoChange, establecimientoId }: 
                   <Upload className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">Subir logo</p>
+                  <p className="font-medium text-foreground">{t('logoUpload.uploadLogo')}</p>
                   <p className="text-sm text-muted-foreground">
-                    Arrastra o haz clic para seleccionar
+                    {t('logoUpload.dragOrClick')}
                   </p>
                 </div>
               </div>

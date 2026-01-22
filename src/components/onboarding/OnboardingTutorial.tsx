@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, type Transition } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X, UserPlus, CircleDot, Users, Settings, FileText } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 
 interface TutorialStep {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   targetSelector: string;
   icon: React.ReactNode;
   position: 'top' | 'bottom' | 'left' | 'right';
@@ -16,40 +17,40 @@ interface TutorialStep {
 const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'add-athletes',
-    title: 'Agregar deportistas',
-    description: 'Usa este botón para añadir nuevos deportistas a tu academia. Podrás registrar su información y monto mensual.',
+    titleKey: 'tutorial.addAthletes',
+    descriptionKey: 'tutorial.addAthletesDesc',
     targetSelector: '[data-tutorial="add-athlete"]',
     icon: <UserPlus className="h-6 w-6" />,
     position: 'bottom',
   },
   {
     id: 'payment-status',
-    title: 'Semáforo de pagos',
-    description: 'El sistema de colores te muestra el estado de cada deportista: Verde = Al día, Amarillo = Por vencer, Rojo = Vencido.',
+    titleKey: 'tutorial.paymentStatus',
+    descriptionKey: 'tutorial.paymentStatusDesc',
     targetSelector: '[data-tutorial="payment-status"]',
     icon: <CircleDot className="h-6 w-6" />,
     position: 'bottom',
   },
   {
     id: 'staff',
-    title: 'Invitar asistentes',
-    description: 'Invita a colaboradores para que te ayuden a gestionar los pagos. Cada uno tendrá su propio código de acceso.',
+    titleKey: 'tutorial.inviteStaff',
+    descriptionKey: 'tutorial.inviteStaffDesc',
     targetSelector: '[data-tutorial="staff"]',
     icon: <Users className="h-6 w-6" />,
     position: 'top',
   },
   {
     id: 'settings',
-    title: 'Configurar club',
-    description: 'Personaliza tu academia: métodos de pago, deportes, logo y más opciones de configuración.',
+    titleKey: 'tutorial.configureClub',
+    descriptionKey: 'tutorial.configureClubDesc',
     targetSelector: '[data-tutorial="settings"]',
     icon: <Settings className="h-6 w-6" />,
     position: 'top',
   },
   {
     id: 'reports',
-    title: 'Reportes y exportar',
-    description: 'Consulta el historial de transacciones y exporta reportes en Excel para tu contabilidad.',
+    titleKey: 'tutorial.reportsExport',
+    descriptionKey: 'tutorial.reportsExportDesc',
     targetSelector: '[data-tutorial="transactions"]',
     icon: <FileText className="h-6 w-6" />,
     position: 'top',
@@ -63,6 +64,7 @@ interface OnboardingTutorialProps {
 }
 
 export function OnboardingTutorial({ isOpen, onComplete, onSkip }: OnboardingTutorialProps) {
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
@@ -338,7 +340,7 @@ export function OnboardingTutorial({ isOpen, onComplete, onSkip }: OnboardingTut
                     {step.icon}
                   </motion.div>
                   <span className="text-xs text-muted-foreground font-medium">
-                    Paso {currentStep + 1} de {TUTORIAL_STEPS.length}
+                    {t('tutorial.step')} {currentStep + 1} {t('tutorial.of')} {TUTORIAL_STEPS.length}
                   </span>
                 </motion.div>
 
@@ -349,8 +351,8 @@ export function OnboardingTutorial({ isOpen, onComplete, onSkip }: OnboardingTut
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h3 className="text-lg font-semibold text-foreground">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                  <h3 className="text-lg font-semibold text-foreground">{t(step.titleKey)}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t(step.descriptionKey)}</p>
                 </motion.div>
 
                 {/* Progress dots */}
@@ -396,7 +398,7 @@ export function OnboardingTutorial({ isOpen, onComplete, onSkip }: OnboardingTut
                     className="gap-1"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    Atrás
+                    {t('common.back')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -404,18 +406,18 @@ export function OnboardingTutorial({ isOpen, onComplete, onSkip }: OnboardingTut
                     onClick={onSkip}
                     className="text-muted-foreground"
                   >
-                    Saltar
+                    {t('common.skip')}
                   </Button>
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Button
+                      <Button
                       size="sm"
                       onClick={handleNext}
                       className="gap-1"
                     >
-                      {currentStep === TUTORIAL_STEPS.length - 1 ? 'Finalizar' : 'Siguiente'}
+                      {currentStep === TUTORIAL_STEPS.length - 1 ? t('tutorial.finish') : t('common.next')}
                       {currentStep < TUTORIAL_STEPS.length - 1 && <ChevronRight className="h-4 w-4" />}
                     </Button>
                   </motion.div>
