@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import logoSportPago from '@/assets/logo-sportpago.png';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -73,9 +74,11 @@ export default function Login() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       {/* Logo and Brand */}
       <div className="text-center mb-8 animate-fade-in">
-        <div className="h-16 w-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-elevated">
-          <span className="text-primary-foreground font-bold text-2xl">SP</span>
-        </div>
+        <img 
+          src={logoSportPago} 
+          alt="SportPago Logo" 
+          className="h-20 w-20 mx-auto mb-4 drop-shadow-lg"
+        />
         <h1 className="text-3xl font-bold text-foreground">SportPago</h1>
         <p className="text-muted-foreground mt-1">{t('login.tagline')}</p>
       </div>

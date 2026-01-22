@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import logoSportPago from '@/assets/logo-sportpago.png';
 
 interface MobileHeaderProps {
   onMenuClick?: () => void;
@@ -37,9 +38,11 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
             </Button>
           )}
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">SP</span>
-            </div>
+            <img 
+              src={logoSportPago} 
+              alt="SportPago" 
+              className="h-9 w-9 object-contain"
+            />
             <div className="hidden sm:block">
               <h1 className="text-sm font-semibold text-foreground">SportPago</h1>
               <p className="text-xs text-muted-foreground">{establecimiento?.nombre}</p>
