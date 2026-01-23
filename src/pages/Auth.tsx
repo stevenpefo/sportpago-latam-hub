@@ -9,8 +9,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import { KeyRound, Mail, Lock, User, UserPlus } from 'lucide-react';
+import { KeyRound, Mail, Lock, User, UserPlus, Globe } from 'lucide-react';
 import { z } from 'zod';
+import { LANGUAGES, Language } from '@/i18n';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 // Validation schemas
 const emailSchema = z.string().email('Email inválido');
@@ -194,8 +201,34 @@ export default function Auth() {
     }
   };
 
+  const { language, setLanguage } = useLanguage();
+
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative">
+      {/* Language Selector - Top Right */}
+      <div className="absolute top-4 right-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="gap-2">
+              <Globe className="h-4 w-4" />
+              <span className="text-lg">{LANGUAGES.find(l => l.code === language)?.flag}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {LANGUAGES.map((lang) => (
+              <DropdownMenuItem
+                key={lang.code}
+                onClick={() => setLanguage(lang.code as Language)}
+                className={language === lang.code ? 'bg-accent' : ''}
+              >
+                <span className="mr-2 text-lg">{lang.flag}</span>
+                <span>{lang.nativeName}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
       {/* Logo and Brand */}
       <div className="text-center mb-8 animate-fade-in">
         <img 
