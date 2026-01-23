@@ -138,24 +138,36 @@ export function useAuth() {
     return { error: null, user: data.user };
   };
 
-  // Sign in with staff access code
-  const signInWithAccessCode = async (accessCode: string) => {
-    // Find staff by access code
+  // Sign in with club code + staff access code
+  const signInWithAccessCode = async (clubCode: string, accessCode: string) => {
+    // First, find the establishment by club code
+    const { data: estabData, error: estabError } = await supabase
+      .from('establecimientos')
+      .select('id')
+      .eq('codigo_club', clubCode.toUpperCase())
+      .maybeSingle();
+
+    if (estabError || !estabData) {
+      return { error: 'invalidClubCode' };
+    }
+
+    // Find staff by establishment + access code
     const { data: staffData, error: staffError } = await supabase
       .from('staff_users')
       .select('id, nombre, user_id, establecimiento_id, activo')
+      .eq('establecimiento_id', estabData.id)
       .eq('codigo_acceso', accessCode)
       .eq('activo', true)
-      .single();
+      .maybeSingle();
 
     if (staffError || !staffData) {
-      return { error: 'Código de acceso inválido' };
+      return { error: 'invalidPin' };
     }
 
     // If staff has a linked user_id, check if there's an active session
     if (staffData.user_id) {
       // User already linked, they should use email/password
-      return { error: 'Este código ya está vinculado a una cuenta. Use email y contraseña.' };
+      return { error: 'codeAlreadyLinked' };
     }
 
     // For staff without user_id, we'll store their info in sessionStorage temporarily

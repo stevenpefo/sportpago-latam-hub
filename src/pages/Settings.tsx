@@ -34,6 +34,8 @@ import {
   Dumbbell,
   Languages,
   GraduationCap,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { COUNTRIES, DEFAULT_PAYMENT_METHODS, SPORTS } from '@/data/countries';
 import { LANGUAGES, Language } from '@/i18n';
@@ -72,6 +74,19 @@ export default function Settings() {
   const [addSportOpen, setAddSportOpen] = useState(false);
   const [newSportName, setNewSportName] = useState('');
   const [showTutorial, setShowTutorial] = useState(false);
+  const [clubCodeCopied, setClubCodeCopied] = useState(false);
+
+  const handleCopyClubCode = () => {
+    if (establecimiento?.codigoClub) {
+      navigator.clipboard.writeText(establecimiento.codigoClub);
+      setClubCodeCopied(true);
+      toast({
+        title: t('settings.clubCodeCopied'),
+        description: establecimiento.codigoClub,
+      });
+      setTimeout(() => setClubCodeCopied(false), 2000);
+    }
+  };
 
   // All available sports (predefined + custom)
   const allSports = [...SPORTS.filter(s => s !== 'Otros'), ...customSports];
@@ -226,6 +241,41 @@ export default function Settings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Club Code */}
+        {establecimiento?.codigoClub && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Building2 className="h-5 w-5 text-primary" />
+                {t('settings.clubCode')}
+              </CardTitle>
+              <CardDescription>
+                {t('settings.clubCodeDesc')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                <span className="font-mono text-2xl tracking-widest flex-1 text-center font-bold">
+                  {establecimiento.codigoClub}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyClubCode}
+                  className="min-h-[44px]"
+                >
+                  {clubCodeCopied ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                  <span className="ml-2">{t('settings.copyClubCode')}</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Logo Upload */}
         <LogoUpload

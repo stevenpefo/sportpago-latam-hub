@@ -23,6 +23,7 @@ const transformEstablecimiento = (dbEstab: any, paymentMethods: PaymentMethod[])
   metodosPago: paymentMethods,
   configuracionCompleta: dbEstab.configuracion_completa,
   logoUrl: dbEstab.logo_url || undefined,
+  codigoClub: dbEstab.codigo_club || undefined,
 });
 
 export function useEstablecimiento() {

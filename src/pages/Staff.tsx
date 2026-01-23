@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Users, Copy, Trash2, KeyRound, UserPlus, MoreVertical } from 'lucide-react';
+import { Plus, Users, Copy, Trash2, KeyRound, UserPlus, MoreVertical, Building2, Check } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +48,32 @@ export default function Staff() {
   const [newStaffName, setNewStaffName] = useState('');
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<StaffUser | null>(null);
+  const [copiedClubCode, setCopiedClubCode] = useState(false);
+  const [copiedPin, setCopiedPin] = useState<string | null>(null);
+
+  const clubCode = (establecimiento as any)?.codigoClub || '';
+
+  const handleCopyClubCode = () => {
+    if (clubCode) {
+      navigator.clipboard.writeText(clubCode);
+      setCopiedClubCode(true);
+      toast({
+        title: t('staff.codeCopied'),
+        description: clubCode,
+      });
+      setTimeout(() => setCopiedClubCode(false), 2000);
+    }
+  };
+
+  const handleCopyPin = (code: string, nombre: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedPin(code);
+    toast({
+      title: t('staff.pinCopied'),
+      description: `${nombre}: ${code}`,
+    });
+    setTimeout(() => setCopiedPin(null), 2000);
+  };
 
   const handleAddStaff = () => {
     if (!newStaffName.trim()) return;
@@ -69,13 +95,7 @@ export default function Staff() {
     });
   };
 
-  const handleCopyCode = (code: string, nombre: string) => {
-    navigator.clipboard.writeText(code);
-    toast({
-      title: 'Código copiado',
-      description: `Código de ${nombre}: ${code}`,
-    });
-  };
+  // Removed old handleCopyCode function - replaced by handleCopyClubCode and handleCopyPin
 
   const handleToggleActive = (id: string, activo: boolean) => {
     updateStaff(id, { activo });
@@ -228,19 +248,53 @@ export default function Staff() {
                         {member.activo ? t('common.active') : t('common.inactive')}
                       </p>
 
-                      {/* Access Code */}
-                      <div className="flex items-center gap-2 mt-3 p-2 bg-muted/50 rounded-lg">
-                        <KeyRound className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-mono text-lg tracking-wider flex-1">
-                          {member.codigoAcceso}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleCopyCode(member.codigoAcceso, member.nombre)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
+                      {/* Access Instructions */}
+                      <div className="mt-3 p-3 bg-muted/50 rounded-lg space-y-2">
+                        <p className="text-xs font-medium text-muted-foreground">
+                          {t('staff.accessInstructions')}
+                        </p>
+                        
+                        {/* Club Code */}
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span className="text-xs text-muted-foreground">{t('login.clubCode')}:</span>
+                          <span className="font-mono text-sm tracking-wider font-semibold">
+                            {clubCode}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0"
+                            onClick={handleCopyClubCode}
+                          >
+                            {copiedClubCode ? (
+                              <Check className="h-3 w-3 text-green-500" />
+                            ) : (
+                              <Copy className="h-3 w-3" />
+                            )}
+                          </Button>
+                        </div>
+
+                        {/* Personal PIN */}
+                        <div className="flex items-center gap-2">
+                          <KeyRound className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span className="text-xs text-muted-foreground">{t('login.personalPin')}:</span>
+                          <span className="font-mono text-lg tracking-wider font-semibold">
+                            {member.codigoAcceso}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0"
+                            onClick={() => handleCopyPin(member.codigoAcceso, member.nombre)}
+                          >
+                            {copiedPin === member.codigoAcceso ? (
+                              <Check className="h-3 w-3 text-green-500" />
+                            ) : (
+                              <Copy className="h-3 w-3" />
+                            )}
+                          </Button>
+                        </div>
                       </div>
 
                       {/* Actions - Responsive layout */}
