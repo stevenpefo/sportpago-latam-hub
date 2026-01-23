@@ -36,15 +36,19 @@
     "signup": "Sign up",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm password",
+    "name": "Name",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
-    "hasAccount": "Already have an account?"
+    "hasAccount": "Already have an account?",
+    "loginHere": "Log in here"
   },
   "login": {
     "tagline": "Sports payment management",
     "admin": "Administrator",
     "assistant": "Assistant",
     "emailPlaceholder": "you@email.com",
+    "namePlaceholder": "Your full name",
     "loggingIn": "Logging in...",
     "signUpHere": "Sign up here",
     "accessCode": "Access code",
@@ -57,7 +61,14 @@
     "loginSuccess": "You have successfully logged in",
     "staffLoginSuccess": "You have logged in as assistant",
     "invalidCredentials": "Invalid credentials",
-    "invalidCode": "Invalid access code"
+    "invalidCode": "Invalid access code",
+    "emailNotConfirmed": "Please confirm your email before logging in",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "userAlreadyExists": "An account with this email already exists",
+    "signupSuccess": "Account created!",
+    "signupSuccessDesc": "Your account has been successfully created",
+    "staffCodeValid": "Valid code",
+    "staffNeedsAccount": "Please create an account to link your assistant code"
   },
   "notFound": {
     "message": "Oops! Page not found",

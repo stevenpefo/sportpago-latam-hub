@@ -1,7 +1,7 @@
 import { Home, Users, Settings, UserCog, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { useApp } from '@/context/AppContext';
+import { useAuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface NavItem {
@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
 
 export function BottomNav() {
   const location = useLocation();
-  const { userRole } = useApp();
+  const { userRole } = useAuthContext();
   const { t } = useLanguage();
 
   const filteredItems = navItems.filter(item => 

@@ -3,24 +3,33 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AppProvider, useApp } from "./context/AppContext";
 import { LanguageProvider } from "./context/LanguageContext";
-import Index from "./pages/Index";
+import { AuthProvider, useAuthContext } from "./context/AuthContext";
+
 import Dashboard from "./pages/Dashboard";
 import Athletes from "./pages/Athletes";
 import Staff from "./pages/Staff";
 import Settings from "./pages/Settings";
 import Transactions from "./pages/Transactions";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
 // Protected Route component
 function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) {
-  const { isAuthenticated, userRole } = useApp();
+  const { isAuthenticated, userRole, isLoading } = useAuthContext();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
   
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/auth" replace />;
   }
   
   if (adminOnly && userRole !== 'admin') {
@@ -31,9 +40,24 @@ function ProtectedRoute({ children, adminOnly = false }: { children: React.React
 }
 
 function AppRoutes() {
+  const { isAuthenticated, isLoading } = useAuthContext();
+
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={
+        isLoading ? (
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : isAuthenticated ? (
+          <Navigate to="/dashboard" replace />
+        ) : (
+          <Navigate to="/auth" replace />
+        )
+      } />
+      <Route path="/auth" element={
+        isAuthenticated ? <Navigate to="/dashboard" replace /> : <Auth />
+      } />
       <Route 
         path="/dashboard" 
         element={
@@ -83,13 +107,13 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <LanguageProvider>
-        <AppProvider>
+        <AuthProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <AppRoutes />
           </BrowserRouter>
-        </AppProvider>
+        </AuthProvider>
       </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>

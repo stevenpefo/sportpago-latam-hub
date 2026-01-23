@@ -36,15 +36,19 @@
     "signup": "Inscription",
     "email": "E-mail",
     "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "name": "Nom",
     "forgotPassword": "Mot de passe oublié ?",
     "noAccount": "Pas de compte ?",
-    "hasAccount": "Déjà un compte ?"
+    "hasAccount": "Déjà un compte ?",
+    "loginHere": "Connectez-vous ici"
   },
   "login": {
     "tagline": "Gestion des paiements sportifs",
     "admin": "Administrateur",
     "assistant": "Assistant",
     "emailPlaceholder": "vous@email.com",
+    "namePlaceholder": "Votre nom complet",
     "loggingIn": "Connexion en cours...",
     "signUpHere": "Inscrivez-vous ici",
     "accessCode": "Code d'accès",
@@ -57,7 +61,14 @@
     "loginSuccess": "Vous êtes connecté avec succès",
     "staffLoginSuccess": "Vous êtes connecté en tant qu'assistant",
     "invalidCredentials": "Identifiants incorrects",
-    "invalidCode": "Code d'accès incorrect"
+    "invalidCode": "Code d'accès incorrect",
+    "emailNotConfirmed": "Veuillez confirmer votre e-mail avant de vous connecter",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "userAlreadyExists": "Un compte avec cet e-mail existe déjà",
+    "signupSuccess": "Compte créé !",
+    "signupSuccessDesc": "Votre compte a été créé avec succès",
+    "staffCodeValid": "Code valide",
+    "staffNeedsAccount": "Veuillez créer un compte pour lier votre code assistant"
   },
   "notFound": {
     "message": "Oups ! Page non trouvée",
