@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { Language, getTranslations, detectBrowserLanguage, t as translate } from '@/i18n';
 
 const LANGUAGE_STORAGE_KEY = 'sportpago-language';
@@ -14,9 +14,13 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (stored && ['es', 'en', 'fr', 'pt'].includes(stored)) {
-      return stored as Language;
+    try {
+      const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+      if (stored && ['es', 'en', 'fr', 'pt'].includes(stored)) {
+        return stored as Language;
+      }
+    } catch {
+      // localStorage might not be available
     }
     return detectBrowserLanguage();
   });
@@ -24,7 +28,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const translations = useMemo(() => getTranslations(language), [language]);
 
   const setLanguage = useCallback((newLanguage: Language) => {
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, newLanguage);
+    try {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, newLanguage);
+    } catch {
+      // localStorage might not be available
+    }
     setLanguageState(newLanguage);
   }, []);
 
@@ -48,7 +56,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useLanguage() {
+export function useLanguage(): LanguageContextType {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');
