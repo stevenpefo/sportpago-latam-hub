@@ -3,7 +3,9 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
 import { BulkPriceModal } from '@/components/athletes/BulkPriceModal';
-import { useApp } from '@/context/AppContext';
+import { useAthletes } from '@/hooks/useAthletes';
+import { useEstablecimiento } from '@/hooks/useEstablecimiento';
+import { useAuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Athlete } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -29,7 +31,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { CategoryInput } from '@/components/ui/CategoryInput';
-import { Plus, Search, Users, CalendarIcon, DollarSign, Dumbbell } from 'lucide-react';
+import { Plus, Search, Users, CalendarIcon, DollarSign, Loader2 } from 'lucide-react';
 import { SPORTS } from '@/data/countries';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -40,19 +42,23 @@ import { SportIconDisplay } from '@/utils/sportIcons';
 export default function Athletes() {
   const { 
     athletes, 
-    establecimiento, 
-    userRole,
-    addAthlete,
-    updateAthletePrices,
+    isLoading,
+    createAthlete,
+    isCreating,
+    updateBulkPrices,
     registerPayment,
     markAsPending,
     markAsInactive,
-    customCategories,
-    addCustomCategory,
-    enabledSports,
-    customSports,
-  } = useApp();
+  } = useAthletes();
+  
+  const { establecimiento, paymentMethods } = useEstablecimiento();
+  const { userRole } = useAuthContext();
   const { t } = useLanguage();
+
+  // TODO: These should come from establecimiento settings
+  const customCategories: string[] = [];
+  const enabledSports: string[] = [];
+  const customSports: string[] = [];
 
   // Get available sports: combine predefined (minus "Otros") + custom, then filter by enabled
   const allSports = [...SPORTS.filter(s => s !== 'Otros'), ...customSports];
@@ -64,7 +70,7 @@ export default function Athletes() {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [bulkPriceModalOpen, setBulkPriceModalOpen] = useState(false);
 
-  // New athlete form state with new fields
+  // New athlete form state
   const [newAthlete, setNewAthlete] = useState({
     nombre: '',
     deporte: '',
@@ -87,7 +93,7 @@ export default function Athletes() {
     setPaymentModalOpen(true);
   };
 
-  const handleConfirmPayment = (
+  const handleConfirmPayment = async (
     metodoPago: string, 
     mesesPagados: number,
     montoPersonalizado?: number,
@@ -95,21 +101,24 @@ export default function Athletes() {
     observaciones?: string
   ) => {
     if (selectedAthlete) {
-      registerPayment(selectedAthlete.id, metodoPago, mesesPagados, montoPersonalizado, referencia, observaciones);
+      await registerPayment({
+        athleteId: selectedAthlete.id, 
+        metodoPago, 
+        mesesPagados, 
+        montoPersonalizado, 
+        referencia, 
+        observaciones,
+        registradoPorNombre: 'Admin',
+      });
+      setPaymentModalOpen(false);
     }
   };
 
-  const handleBulkPriceUpdate = (athleteIds: string[], newPrice: number) => {
-    updateAthletePrices(athleteIds, newPrice);
+  const handleBulkPriceUpdate = async (athleteIds: string[], newPrice: number) => {
+    await updateBulkPrices(athleteIds, newPrice);
   };
 
-  const handleAddAthlete = () => {
-    const proximoPago = new Date();
-    proximoPago.setDate(parseInt(newAthlete.diaPago));
-    if (proximoPago < new Date()) {
-      proximoPago.setMonth(proximoPago.getMonth() + 1);
-    }
-
+  const handleAddAthlete = async () => {
     // If only one sport available, use it automatically
     const selectedSport = availableSports.length === 1 ? availableSports[0] : newAthlete.deporte;
     
@@ -117,24 +126,16 @@ export default function Athletes() {
       ? newAthlete.deportePersonalizado || 'Otros'
       : selectedSport;
 
-    // Save custom category if it's new
-    if (newAthlete.categoria.trim()) {
-      addCustomCategory(newAthlete.categoria);
-    }
-
-    addAthlete({
-      establecimientoId: establecimiento?.id || '',
+    await createAthlete({
       nombre: newAthlete.nombre,
       deporte: deporteFinal,
       deportePersonalizado: newAthlete.deporte === 'Otros' ? newAthlete.deportePersonalizado : undefined,
       fechaNacimiento: newAthlete.fechaNacimiento,
-      categoria: (newAthlete.categoria || undefined) as any,
+      categoria: newAthlete.categoria || undefined,
       telefono: newAthlete.telefono,
       email: newAthlete.email,
       montoMensual: parseFloat(newAthlete.montoMensual) || 0,
       diaPago: parseInt(newAthlete.diaPago),
-      proximoPago,
-      estadoManual: 'pendiente',
     });
 
     setNewAthlete({
@@ -154,6 +155,16 @@ export default function Athletes() {
   const currencySymbol = establecimiento?.simboloMoneda || '$';
   const isAdmin = userRole === 'admin';
   const canAddAthletes = isAdmin || userRole === 'staff';
+
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -423,7 +434,7 @@ export default function Athletes() {
         open={paymentModalOpen}
         onOpenChange={setPaymentModalOpen}
         athlete={selectedAthlete}
-        paymentMethods={establecimiento?.metodosPago || []}
+        paymentMethods={paymentMethods}
         currencySymbol={currencySymbol}
         onConfirm={handleConfirmPayment}
       />

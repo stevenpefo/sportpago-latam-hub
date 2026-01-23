@@ -61,6 +61,7 @@ export function useEstablecimiento() {
 
   return {
     establecimiento: establecimientoQuery.data || null,
+    paymentMethods: establecimientoQuery.data?.metodosPago || [],
     isLoading: establecimientoQuery.isLoading,
     error: establecimientoQuery.error,
     refetch: establecimientoQuery.refetch,
