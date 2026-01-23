@@ -89,6 +89,7 @@
     "addAthlete": "Agregar",
     "searchPlaceholder": "Buscar por nombre, teléfono o email...",
     "noAthletes": "No hay deportistas registrados",
+    "addFirstAthlete": "Agrega tu primer deportista para empezar",
     "name": "Nombre",
     "phone": "Teléfono",
     "email": "Correo",
@@ -106,7 +107,8 @@
     "markPending": "Marcar Pendiente",
     "markInactive": "Marcar Inactivo",
     "call": "Llamar",
-    "sendEmail": "Enviar Email"
+    "sendEmail": "Enviar Email",
+    "statusUpdated": "Estado actualizado"
   },
   "staff": {
     "title": "Asistentes",
@@ -202,7 +204,10 @@
     "total": "Total a pagar",
     "ofMonthlyFee": "de mensualidad",
     "nextPaymentDate": "Próximo pago será",
-    "confirmPayment": "Confirmar Pago"
+    "confirmPayment": "Confirmar Pago",
+    "success": "¡Pago registrado!",
+    "paymentRegistered": "El pago ha sido registrado exitosamente",
+    "paymentError": "Error al registrar el pago"
   },
   "athleteDetail": {
     "title": "Detalles del deportista",

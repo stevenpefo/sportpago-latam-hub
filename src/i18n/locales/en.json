@@ -89,6 +89,7 @@
     "addAthlete": "Add",
     "searchPlaceholder": "Search by name, phone or email...",
     "noAthletes": "No athletes registered",
+    "addFirstAthlete": "Add your first athlete to get started",
     "name": "Name",
     "phone": "Phone",
     "email": "Email",
@@ -106,7 +107,8 @@
     "markPending": "Mark Pending",
     "markInactive": "Mark Inactive",
     "call": "Call",
-    "sendEmail": "Send Email"
+    "sendEmail": "Send Email",
+    "statusUpdated": "Status updated"
   },
   "staff": {
     "title": "Staff",
@@ -202,7 +204,10 @@
     "total": "Total to pay",
     "ofMonthlyFee": "of monthly fee",
     "nextPaymentDate": "Next payment will be",
-    "confirmPayment": "Confirm Payment"
+    "confirmPayment": "Confirm Payment",
+    "success": "Payment registered!",
+    "paymentRegistered": "Payment has been successfully registered",
+    "paymentError": "Error registering payment"
   },
   "athleteDetail": {
     "title": "Athlete details",
