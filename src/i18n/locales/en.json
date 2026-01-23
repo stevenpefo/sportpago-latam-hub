@@ -21,7 +21,8 @@
     "custom": "Custom",
     "optional": "optional",
     "example": "Ex",
-    "error": "Error"
+    "error": "Error",
+    "selectDate": "Select date"
   },
   "nav": {
     "dashboard": "Home",
@@ -108,7 +109,11 @@
     "markInactive": "Mark Inactive",
     "call": "Call",
     "sendEmail": "Send Email",
-    "statusUpdated": "Status updated"
+    "statusUpdated": "Status updated",
+    "editAthlete": "Edit athlete",
+    "deleteAthlete": "Delete athlete",
+    "deleteConfirmation": "Are you sure you want to delete {{name}}? This action cannot be undone and all associated payment records will be deleted.",
+    "specifyOtherSport": "Specify sport"
   },
   "staff": {
     "title": "Staff",

@@ -21,7 +21,8 @@
     "custom": "Personalizado",
     "optional": "opcional",
     "example": "Ex",
-    "error": "Erro"
+    "error": "Erro",
+    "selectDate": "Selecionar data"
   },
   "nav": {
     "dashboard": "Início",
@@ -108,7 +109,11 @@
     "markInactive": "Marcar Inativo",
     "call": "Ligar",
     "sendEmail": "Enviar Email",
-    "statusUpdated": "Status atualizado"
+    "statusUpdated": "Status atualizado",
+    "editAthlete": "Editar atleta",
+    "deleteAthlete": "Excluir atleta",
+    "deleteConfirmation": "Tem certeza de que deseja excluir {{name}}? Esta ação não pode ser desfeita e todos os registros de pagamento associados serão excluídos.",
+    "specifyOtherSport": "Especificar esporte"
   },
   "staff": {
     "title": "Equipe",

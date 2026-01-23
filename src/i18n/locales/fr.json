@@ -21,7 +21,8 @@
     "custom": "Personnalisé",
     "optional": "optionnel",
     "example": "Ex",
-    "error": "Erreur"
+    "error": "Erreur",
+    "selectDate": "Sélectionner une date"
   },
   "nav": {
     "dashboard": "Accueil",
@@ -108,7 +109,11 @@
     "markInactive": "Marquer Inactif",
     "call": "Appeler",
     "sendEmail": "Envoyer Email",
-    "statusUpdated": "Statut mis à jour"
+    "statusUpdated": "Statut mis à jour",
+    "editAthlete": "Modifier l'athlète",
+    "deleteAthlete": "Supprimer l'athlète",
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible et tous les enregistrements de paiement associés seront supprimés.",
+    "specifyOtherSport": "Spécifier le sport"
   },
   "staff": {
     "title": "Personnel",
