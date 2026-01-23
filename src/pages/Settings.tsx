@@ -33,6 +33,7 @@ import {
   Smartphone,
   Dumbbell,
   Languages,
+  GraduationCap,
 } from 'lucide-react';
 import { COUNTRIES, DEFAULT_PAYMENT_METHODS, SPORTS } from '@/data/countries';
 import { LANGUAGES, Language } from '@/i18n';
@@ -40,6 +41,7 @@ import { PaymentMethod } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { LogoUpload } from '@/components/settings/LogoUpload';
+import { OnboardingTutorial } from '@/components/onboarding/OnboardingTutorial';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'banknote': Banknote,
@@ -69,6 +71,7 @@ export default function Settings() {
   const [newMethodIcon, setNewMethodIcon] = useState('wallet');
   const [addSportOpen, setAddSportOpen] = useState(false);
   const [newSportName, setNewSportName] = useState('');
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // All available sports (predefined + custom)
   const allSports = [...SPORTS.filter(s => s !== 'Otros'), ...customSports];
@@ -595,7 +598,37 @@ export default function Settings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Tutorial Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <GraduationCap className="h-5 w-5 text-primary" />
+              {t('settings.tutorial')}
+            </CardTitle>
+            <CardDescription>
+              {t('settings.tutorialDesc')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => setShowTutorial(true)}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              <GraduationCap className="h-4 w-4 mr-2" />
+              {t('settings.repeatTutorial')}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Onboarding Tutorial Modal */}
+      <OnboardingTutorial
+        isOpen={showTutorial}
+        onComplete={() => setShowTutorial(false)}
+        onSkip={() => setShowTutorial(false)}
+      />
     </AppLayout>
   );
 }
