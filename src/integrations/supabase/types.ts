@@ -136,6 +136,7 @@ export type Database = {
       establecimientos: {
         Row: {
           admin_id: string
+          codigo_club: string
           configuracion_completa: boolean
           created_at: string
           id: string
@@ -149,6 +150,7 @@ export type Database = {
         }
         Insert: {
           admin_id: string
+          codigo_club: string
           configuracion_completa?: boolean
           created_at?: string
           id?: string
@@ -162,6 +164,7 @@ export type Database = {
         }
         Update: {
           admin_id?: string
+          codigo_club?: string
           configuracion_completa?: boolean
           created_at?: string
           id?: string

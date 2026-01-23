@@ -12,7 +12,7 @@ interface AuthContextType {
   tutorialCompleted: boolean;
   signUp: (email: string, password: string, nombre: string) => Promise<{ error: string | null; user?: User | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null; user?: User | null }>;
-  signInWithAccessCode: (accessCode: string) => Promise<{ error: string | null; staffData?: any; needsLinking?: boolean }>;
+  signInWithAccessCode: (clubCode: string, accessCode: string) => Promise<{ error: string | null; staffData?: any; needsLinking?: boolean }>;
   signOut: () => Promise<{ error: string | null }>;
   completeTutorial: () => Promise<void>;
   refetchUserData: () => void;

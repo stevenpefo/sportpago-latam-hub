@@ -31,6 +31,7 @@ export interface Establecimiento {
   metodosPago: PaymentMethod[];
   configuracionCompleta: boolean;
   logoUrl?: string;
+  codigoClub?: string;
 }
 
 export interface AdminUser {

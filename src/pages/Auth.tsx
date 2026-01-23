@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import { KeyRound, Mail, Lock, User, UserPlus, Globe } from 'lucide-react';
+import { KeyRound, Mail, Lock, User, UserPlus, Globe, Building2 } from 'lucide-react';
 import { z } from 'zod';
 import { LANGUAGES, Language } from '@/i18n';
 import {
@@ -41,7 +41,8 @@ export default function Auth() {
   const [signupName, setSignupName] = useState('');
   
   // Staff state
-  const [staffCode, setStaffCode] = useState('');
+  const [clubCode, setClubCode] = useState('');
+  const [staffPin, setStaffPin] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
@@ -174,12 +175,28 @@ export default function Auth() {
     setIsLoading(true);
     
     try {
-      const { error, needsLinking } = await signInWithAccessCode(staffCode);
-      
-      if (error) {
+      // Validate club code format (4-6 alphanumeric)
+      if (!/^[A-Z0-9]{4,6}$/i.test(clubCode)) {
         toast({
           title: t('common.error'),
-          description: error,
+          description: t('login.invalidClubCodeFormat'),
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      const { error, needsLinking } = await signInWithAccessCode(clubCode, staffPin);
+      
+      if (error) {
+        const errorMessages: Record<string, string> = {
+          'invalidClubCode': t('login.invalidClubCode'),
+          'invalidPin': t('login.invalidPin'),
+          'codeAlreadyLinked': t('login.codeAlreadyLinked'),
+        };
+        
+        toast({
+          title: t('common.error'),
+          description: errorMessages[error] || error,
           variant: 'destructive',
         });
       } else if (needsLinking) {
@@ -411,18 +428,38 @@ export default function Auth() {
             <TabsContent value="staff" className="mt-0">
               <form onSubmit={handleStaffLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="staff-code">{t('login.accessCode')}</Label>
+                  <Label htmlFor="club-code">{t('login.clubCode')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    {t('login.accessCodeDesc')}
+                    {t('login.clubCodeDesc')}
+                  </p>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="club-code"
+                      type="text"
+                      placeholder={t('login.clubCodePlaceholder')}
+                      value={clubCode}
+                      onChange={(e) => setClubCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))}
+                      className="pl-10 text-center text-xl tracking-widest font-mono uppercase"
+                      maxLength={6}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="staff-pin">{t('login.personalPin')}</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t('login.personalPinDesc')}
                   </p>
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="staff-code"
+                      id="staff-pin"
                       type="text"
                       placeholder="123456"
-                      value={staffCode}
-                      onChange={(e) => setStaffCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      value={staffPin}
+                      onChange={(e) => setStaffPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       className="pl-10 text-center text-2xl tracking-[0.5em] font-mono"
                       maxLength={6}
                       required
@@ -433,7 +470,7 @@ export default function Auth() {
                 <Button
                   type="submit"
                   className="w-full gradient-primary"
-                  disabled={isLoading || staffCode.length !== 6}
+                  disabled={isLoading || clubCode.length < 4 || staffPin.length !== 6}
                 >
                   {isLoading ? t('login.verifying') : t('login.access')}
                 </Button>
