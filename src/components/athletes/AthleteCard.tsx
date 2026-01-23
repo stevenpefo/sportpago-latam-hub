@@ -1,4 +1,4 @@
-import { Check, Clock, XCircle, Phone, Mail, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { Check, Clock, XCircle, Phone, Mail, MoreVertical, Pencil, Trash2, Eye } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -89,9 +89,12 @@ export function AthleteCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <h3 className="font-semibold text-foreground truncate text-sm sm:text-base">
+                <button
+                  onClick={() => onViewDetails?.(athlete)}
+                  className="font-semibold text-foreground truncate text-sm sm:text-base hover:text-primary hover:underline text-left block max-w-full"
+                >
                   {athlete.nombre}
-                </h3>
+                </button>
                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
                   <SportIconDisplay sport={athlete.deporte} iconClassName="h-3 w-3" />
                 </p>
@@ -132,6 +135,19 @@ export function AthleteCard({
                       <XCircle className="h-4 w-4 mr-2" />
                       {t('athletes.markInactive')}
                     </DropdownMenuItem>
+                    
+                    {onViewDetails && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => onViewDetails(athlete)}
+                          className="min-h-[44px]"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          {t('athletes.viewDetails')}
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     
                     {!isStaffView && (
                       <>

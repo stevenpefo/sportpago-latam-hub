@@ -113,7 +113,8 @@
     "editAthlete": "Modifier l'athlète",
     "deleteAthlete": "Supprimer l'athlète",
     "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible et tous les enregistrements de paiement associés seront supprimés.",
-    "specifyOtherSport": "Spécifier le sport"
+    "specifyOtherSport": "Spécifier le sport",
+    "viewDetails": "Voir les détails"
   },
   "staff": {
     "title": "Personnel",
