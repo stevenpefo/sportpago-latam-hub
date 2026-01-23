@@ -4,11 +4,12 @@ import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
 import { OnboardingTutorial } from '@/components/onboarding/OnboardingTutorial';
-import { useApp } from '@/context/AppContext';
+import { useAuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useAthletes } from '@/hooks/useAthletes';
+import { useEstablecimiento } from '@/hooks/useEstablecimiento';
 import { Athlete } from '@/types';
-import { Users, AlertTriangle, CheckCircle, Clock, TrendingUp, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Users, AlertTriangle, CheckCircle, Clock, TrendingUp, Filter, Loader2 } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -17,78 +18,43 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Dashboard() {
+  const { userRole, user, completeTutorial, tutorialCompleted } = useAuthContext();
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  
   const { 
     athletes, 
-    establecimiento, 
-    userRole, 
+    isLoading: isLoadingAthletes, 
     registerPayment,
     markAsPending,
     markAsInactive,
-  } = useApp();
-  const { t } = useLanguage();
+  } = useAthletes();
+  
+  const { establecimiento, isLoading: isLoadingEstab } = useEstablecimiento();
 
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialChecked, setTutorialChecked] = useState(false);
 
-  // Check if user needs to see the tutorial
+  // Show tutorial for new admin users
   useEffect(() => {
-    const checkTutorialStatus = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('tutorial_completado')
-            .eq('id', user.id)
-            .single();
-          
-          if (profile && !profile.tutorial_completado && userRole === 'admin') {
-            setShowTutorial(true);
-          }
-        }
-      } catch (error) {
-        console.log('Tutorial check error:', error);
-      } finally {
-        setTutorialChecked(true);
-      }
-    };
-
-    checkTutorialStatus();
-  }, [userRole]);
+    if (userRole === 'admin' && !tutorialCompleted) {
+      setShowTutorial(true);
+    }
+  }, [userRole, tutorialCompleted]);
 
   const handleTutorialComplete = async () => {
     setShowTutorial(false);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from('profiles')
-          .update({ tutorial_completado: true })
-          .eq('id', user.id);
-      }
-    } catch (error) {
-      console.log('Error updating tutorial status:', error);
-    }
+    await completeTutorial();
   };
 
   const handleTutorialSkip = async () => {
     setShowTutorial(false);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from('profiles')
-          .update({ tutorial_completado: true })
-          .eq('id', user.id);
-      }
-    } catch (error) {
-      console.log('Error updating tutorial status:', error);
-    }
+    await completeTutorial();
   };
 
   const stats = useMemo(() => {
@@ -128,24 +94,76 @@ export default function Dashboard() {
     setPaymentModalOpen(true);
   };
 
-  const handleConfirmPayment = (
+  const handleConfirmPayment = async (
     metodoPago: string, 
     mesesPagados: number,
     montoPersonalizado?: number,
     referencia?: string, 
     observaciones?: string
   ) => {
-    if (selectedAthlete) {
-      registerPayment(selectedAthlete.id, metodoPago, mesesPagados, montoPersonalizado, referencia, observaciones);
+    if (!selectedAthlete) return;
+    
+    try {
+      await registerPayment({
+        athleteId: selectedAthlete.id,
+        metodoPago,
+        mesesPagados,
+        montoPersonalizado,
+        referencia,
+        observaciones,
+        registradoPorNombre: user?.user_metadata?.nombre || user?.email || 'Sistema',
+      });
+      
+      toast({
+        title: t('payment.success'),
+        description: t('payment.paymentRegistered'),
+      });
+      
+      setPaymentModalOpen(false);
+    } catch (error) {
+      toast({
+        title: t('common.error'),
+        description: t('payment.paymentError'),
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleMarkPending = async (athleteId: string) => {
+    try {
+      await markAsPending(athleteId);
+      toast({ title: t('athletes.statusUpdated') });
+    } catch (error) {
+      toast({ title: t('common.error'), variant: 'destructive' });
+    }
+  };
+
+  const handleMarkInactive = async (athleteId: string) => {
+    try {
+      await markAsInactive(athleteId);
+      toast({ title: t('athletes.statusUpdated') });
+    } catch (error) {
+      toast({ title: t('common.error'), variant: 'destructive' });
     }
   };
 
   const isStaffView = userRole === 'staff';
   const currencySymbol = establecimiento?.simboloMoneda || '$';
+  const isLoading = isLoadingAthletes || isLoadingEstab;
 
   const formatCurrency = (amount: number) => {
     return `${currencySymbol}${amount.toLocaleString()}`;
   };
+
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -153,12 +171,12 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="space-y-1">
           <h1 className="text-2xl font-bold text-foreground">
-            {isStaffView ? t('dashboard.title') : t('dashboard.title')}
+            {t('dashboard.title')}
           </h1>
           <p className="text-muted-foreground">
             {isStaffView 
               ? t('nav.athletes')
-              : `${t('dashboard.welcome')}, ${establecimiento?.nombre || ''}`
+              : `${t('dashboard.welcome')}, ${establecimiento?.nombre || user?.user_metadata?.nombre || ''}`
             }
           </p>
         </div>
@@ -237,6 +255,9 @@ export default function Dashboard() {
             <div className="text-center py-12 text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p>{t('athletes.noAthletes')}</p>
+              {!isStaffView && (
+                <p className="text-sm mt-2">{t('athletes.addFirstAthlete')}</p>
+              )}
             </div>
           ) : (
             filteredAthletes.map((athlete) => (
@@ -245,8 +266,8 @@ export default function Dashboard() {
                 athlete={athlete}
                 currencySymbol={currencySymbol}
                 onRegisterPayment={handleRegisterPayment}
-                onMarkPending={markAsPending}
-                onMarkInactive={markAsInactive}
+                onMarkPending={handleMarkPending}
+                onMarkInactive={handleMarkInactive}
                 isStaffView={isStaffView}
               />
             ))

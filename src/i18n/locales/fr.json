@@ -89,6 +89,7 @@
     "addAthlete": "Ajouter",
     "searchPlaceholder": "Rechercher par nom, téléphone ou e-mail...",
     "noAthletes": "Aucun athlète enregistré",
+    "addFirstAthlete": "Ajoutez votre premier athlète pour commencer",
     "name": "Nom",
     "phone": "Téléphone",
     "email": "E-mail",
@@ -106,7 +107,8 @@
     "markPending": "Marquer En attente",
     "markInactive": "Marquer Inactif",
     "call": "Appeler",
-    "sendEmail": "Envoyer Email"
+    "sendEmail": "Envoyer Email",
+    "statusUpdated": "Statut mis à jour"
   },
   "staff": {
     "title": "Personnel",
@@ -202,7 +204,10 @@
     "total": "Total à payer",
     "ofMonthlyFee": "de frais mensuels",
     "nextPaymentDate": "Prochain paiement sera le",
-    "confirmPayment": "Confirmer Paiement"
+    "confirmPayment": "Confirmer Paiement",
+    "success": "Paiement enregistré !",
+    "paymentRegistered": "Le paiement a été enregistré avec succès",
+    "paymentError": "Erreur lors de l'enregistrement du paiement"
   },
   "athleteDetail": {
     "title": "Détails de l'athlète",
