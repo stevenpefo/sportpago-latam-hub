@@ -1,4 +1,4 @@
-import { Check, Clock, XCircle, Phone, Mail, MoreVertical } from 'lucide-react';
+import { Check, Clock, XCircle, Phone, Mail, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -7,6 +7,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Athlete } from '@/types';
@@ -20,6 +21,8 @@ interface AthleteCardProps {
   onRegisterPayment: (athlete: Athlete) => void;
   onMarkPending: (athleteId: string) => void;
   onMarkInactive: (athleteId: string) => void;
+  onEdit?: (athlete: Athlete) => void;
+  onDelete?: (athlete: Athlete) => void;
   onViewDetails?: (athlete: Athlete) => void;
   isStaffView?: boolean;
 }
@@ -30,6 +33,8 @@ export function AthleteCard({
   onRegisterPayment,
   onMarkPending,
   onMarkInactive,
+  onEdit,
+  onDelete,
   onViewDetails,
   isStaffView = false,
 }: AthleteCardProps) {
@@ -127,13 +132,41 @@ export function AthleteCard({
                       <XCircle className="h-4 w-4 mr-2" />
                       {t('athletes.markInactive')}
                     </DropdownMenuItem>
+                    
+                    {!isStaffView && (
+                      <>
+                        <DropdownMenuSeparator />
+                        {onEdit && (
+                          <DropdownMenuItem 
+                            onClick={() => onEdit(athlete)}
+                            className="min-h-[44px]"
+                          >
+                            <Pencil className="h-4 w-4 mr-2" />
+                            {t('common.edit')}
+                          </DropdownMenuItem>
+                        )}
+                        {onDelete && (
+                          <DropdownMenuItem 
+                            onClick={() => onDelete(athlete)}
+                            className="min-h-[44px] text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            {t('common.delete')}
+                          </DropdownMenuItem>
+                        )}
+                      </>
+                    )}
+                    
                     {!isStaffView && athlete.telefono && (
-                      <DropdownMenuItem asChild className="min-h-[44px]">
-                        <a href={`tel:${athlete.telefono}`}>
-                          <Phone className="h-4 w-4 mr-2" />
-                          {t('athletes.call')}
-                        </a>
-                      </DropdownMenuItem>
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild className="min-h-[44px]">
+                          <a href={`tel:${athlete.telefono}`}>
+                            <Phone className="h-4 w-4 mr-2" />
+                            {t('athletes.call')}
+                          </a>
+                        </DropdownMenuItem>
+                      </>
                     )}
                     {!isStaffView && athlete.email && (
                       <DropdownMenuItem asChild className="min-h-[44px]">

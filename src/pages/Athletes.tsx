@@ -3,6 +3,8 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { AthleteCard } from '@/components/athletes/AthleteCard';
 import { PaymentModal } from '@/components/athletes/PaymentModal';
 import { BulkPriceModal } from '@/components/athletes/BulkPriceModal';
+import { EditAthleteModal } from '@/components/athletes/EditAthleteModal';
+import { DeleteAthleteDialog } from '@/components/athletes/DeleteAthleteDialog';
 import { useAthletes } from '@/hooks/useAthletes';
 import { useEstablecimiento } from '@/hooks/useEstablecimiento';
 import { useAuthContext } from '@/context/AuthContext';
@@ -45,6 +47,10 @@ export default function Athletes() {
     isLoading,
     createAthlete,
     isCreating,
+    updateAthlete,
+    isUpdating,
+    deleteAthlete,
+    isDeleting,
     updateBulkPrices,
     registerPayment,
     markAsPending,
@@ -69,6 +75,8 @@ export default function Athletes() {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [bulkPriceModalOpen, setBulkPriceModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // New athlete form state
   const [newAthlete, setNewAthlete] = useState({
@@ -116,6 +124,22 @@ export default function Athletes() {
 
   const handleBulkPriceUpdate = async (athleteIds: string[], newPrice: number) => {
     await updateBulkPrices(athleteIds, newPrice);
+  };
+
+  const handleEditAthlete = (athlete: Athlete) => {
+    setSelectedAthlete(athlete);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteAthlete = (athlete: Athlete) => {
+    setSelectedAthlete(athlete);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedAthlete) {
+      await deleteAthlete(selectedAthlete.id);
+    }
   };
 
   const handleAddAthlete = async () => {
@@ -240,6 +264,8 @@ export default function Athletes() {
                 onRegisterPayment={handleRegisterPayment}
                 onMarkPending={markAsPending}
                 onMarkInactive={markAsInactive}
+                onEdit={isAdmin ? handleEditAthlete : undefined}
+                onDelete={isAdmin ? handleDeleteAthlete : undefined}
                 isStaffView={userRole === 'staff'}
               />
             ))
@@ -445,6 +471,24 @@ export default function Athletes() {
         athletes={athletes}
         currencySymbol={currencySymbol}
         onConfirm={handleBulkPriceUpdate}
+      />
+
+      <EditAthleteModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        athlete={selectedAthlete}
+        currencySymbol={currencySymbol}
+        onSave={updateAthlete}
+        isLoading={isUpdating}
+        customCategories={customCategories}
+      />
+
+      <DeleteAthleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        athlete={selectedAthlete}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
       />
     </AppLayout>
   );
