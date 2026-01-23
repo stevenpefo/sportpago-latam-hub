@@ -36,15 +36,19 @@
     "signup": "Crear cuenta",
     "email": "Correo electrónico",
     "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "name": "Nombre",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "noAccount": "¿No tienes cuenta?",
-    "hasAccount": "¿Ya tienes cuenta?"
+    "hasAccount": "¿Ya tienes cuenta?",
+    "loginHere": "Inicia sesión aquí"
   },
   "login": {
     "tagline": "Gestión de pagos deportivos",
     "admin": "Administrador",
     "assistant": "Asistente",
     "emailPlaceholder": "tu@email.com",
+    "namePlaceholder": "Tu nombre completo",
     "loggingIn": "Iniciando sesión...",
     "signUpHere": "Regístrate aquí",
     "accessCode": "Código de acceso",
@@ -57,7 +61,14 @@
     "loginSuccess": "Has iniciado sesión correctamente",
     "staffLoginSuccess": "Has iniciado sesión como asistente",
     "invalidCredentials": "Credenciales incorrectas",
-    "invalidCode": "Código de acceso incorrecto"
+    "invalidCode": "Código de acceso incorrecto",
+    "emailNotConfirmed": "Por favor confirma tu email antes de iniciar sesión",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "userAlreadyExists": "Ya existe una cuenta con este email",
+    "signupSuccess": "¡Cuenta creada!",
+    "signupSuccessDesc": "Tu cuenta ha sido creada exitosamente",
+    "staffCodeValid": "Código válido",
+    "staffNeedsAccount": "Por favor crea una cuenta para vincular tu código de asistente"
   },
   "notFound": {
     "message": "¡Ups! Página no encontrada",

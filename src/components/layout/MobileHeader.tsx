@@ -1,7 +1,8 @@
 import { Menu, Bell, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useApp } from '@/context/AppContext';
+import { useAuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,15 +19,21 @@ interface MobileHeaderProps {
 }
 
 export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
-  const { currentUser, establecimiento, logout, userRole } = useApp();
+  const { user, userRole, signOut } = useAuthContext();
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
-  const initials = currentUser?.nombre
-    .split(' ')
-    .map(n => n[0])
+  const initials = user?.user_metadata?.nombre
+    ?.split(' ')
+    .map((n: string) => n[0])
     .join('')
     .toUpperCase()
-    .slice(0, 2) || 'SP';
+    .slice(0, 2) || user?.email?.slice(0, 2).toUpperCase() || 'SP';
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/auth');
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -45,7 +52,6 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
             />
             <div className="hidden sm:block">
               <h1 className="text-sm font-semibold text-foreground">SportPago</h1>
-              <p className="text-xs text-muted-foreground">{establecimiento?.nombre}</p>
             </div>
           </div>
         </div>
@@ -60,13 +66,6 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
-                  {establecimiento?.logoUrl && (
-                    <AvatarImage 
-                      src={establecimiento.logoUrl} 
-                      alt={establecimiento.nombre}
-                      className="object-cover"
-                    />
-                  )}
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                     {initials}
                   </AvatarFallback>
@@ -76,14 +75,16 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{currentUser?.nombre}</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user?.user_metadata?.nombre || user?.email}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {userRole === 'admin' ? 'Administrador' : 'Asistente'}
                   </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="text-destructive">
+              <DropdownMenuItem onClick={handleLogout} className="text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
                 {t('nav.logout')}
               </DropdownMenuItem>
