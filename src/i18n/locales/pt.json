@@ -113,7 +113,8 @@
     "editAthlete": "Editar atleta",
     "deleteAthlete": "Excluir atleta",
     "deleteConfirmation": "Tem certeza de que deseja excluir {{name}}? Esta ação não pode ser desfeita e todos os registros de pagamento associados serão excluídos.",
-    "specifyOtherSport": "Especificar esporte"
+    "specifyOtherSport": "Especificar esporte",
+    "viewDetails": "Ver detalhes"
   },
   "staff": {
     "title": "Equipe",

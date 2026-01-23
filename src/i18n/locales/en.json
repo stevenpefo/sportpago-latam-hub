@@ -113,7 +113,8 @@
     "editAthlete": "Edit athlete",
     "deleteAthlete": "Delete athlete",
     "deleteConfirmation": "Are you sure you want to delete {{name}}? This action cannot be undone and all associated payment records will be deleted.",
-    "specifyOtherSport": "Specify sport"
+    "specifyOtherSport": "Specify sport",
+    "viewDetails": "View details"
   },
   "staff": {
     "title": "Staff",

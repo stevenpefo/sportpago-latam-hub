@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { useApp } from '@/context/AppContext';
+import { useTransactions } from '@/hooks/useTransactions';
+import { useAthletes } from '@/hooks/useAthletes';
+import { useEstablecimiento } from '@/hooks/useEstablecimiento';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Receipt, TrendingUp, Calendar, Banknote, FileText, Download } from 'lucide-react';
+import { Receipt, TrendingUp, Calendar, Banknote, FileText, Download, Loader2 } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { PaymentMethodFilter } from '@/components/transactions/PaymentMethodFilter';
 import { DateRangeFilter } from '@/components/transactions/DateRangeFilter';
@@ -23,7 +25,9 @@ const dateLocales = {
 };
 
 export default function Transactions() {
-  const { transactions, athletes, establecimiento } = useApp();
+  const { transactions, isLoading: txLoading } = useTransactions();
+  const { athletes, isLoading: athLoading } = useAthletes();
+  const { establecimiento, paymentMethods } = useEstablecimiento();
   const { t, language } = useLanguage();
   const currencySymbol = establecimiento?.simboloMoneda || '$';
   const currentLocale = dateLocales[language as keyof typeof dateLocales] || es;
@@ -88,7 +92,7 @@ export default function Transactions() {
   };
 
   const getPaymentMethodName = (methodId: string) => {
-    return establecimiento?.metodosPago.find(m => m.id === methodId)?.nombre || methodId;
+    return paymentMethods.find(m => m.id === methodId || m.nombre === methodId)?.nombre || methodId;
   };
 
   const handleAthleteClick = (athleteId: string) => {
@@ -108,6 +112,18 @@ export default function Transactions() {
       establishmentName: establecimiento.nombre,
     });
   };
+
+  const isLoading = txLoading || athLoading;
+
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -154,7 +170,7 @@ export default function Transactions() {
             onDateRangeChange={setDateRange}
           />
           <PaymentMethodFilter
-            paymentMethods={establecimiento?.metodosPago || []}
+            paymentMethods={paymentMethods}
             selectedMethods={selectedMethods}
             onFilterChange={setSelectedMethods}
           />

@@ -5,7 +5,9 @@ import { PaymentModal } from '@/components/athletes/PaymentModal';
 import { BulkPriceModal } from '@/components/athletes/BulkPriceModal';
 import { EditAthleteModal } from '@/components/athletes/EditAthleteModal';
 import { DeleteAthleteDialog } from '@/components/athletes/DeleteAthleteDialog';
+import { AthleteDetailModal } from '@/components/athletes/AthleteDetailModal';
 import { useAthletes } from '@/hooks/useAthletes';
+import { useTransactions } from '@/hooks/useTransactions';
 import { useEstablecimiento } from '@/hooks/useEstablecimiento';
 import { useAuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -56,7 +58,7 @@ export default function Athletes() {
     markAsPending,
     markAsInactive,
   } = useAthletes();
-  
+  const { transactions } = useTransactions();
   const { establecimiento, paymentMethods } = useEstablecimiento();
   const { userRole } = useAuthContext();
   const { t } = useLanguage();
@@ -77,6 +79,7 @@ export default function Athletes() {
   const [bulkPriceModalOpen, setBulkPriceModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
 
   // New athlete form state
   const [newAthlete, setNewAthlete] = useState({
@@ -140,6 +143,11 @@ export default function Athletes() {
     if (selectedAthlete) {
       await deleteAthlete(selectedAthlete.id);
     }
+  };
+
+  const handleViewDetails = (athlete: Athlete) => {
+    setSelectedAthlete(athlete);
+    setDetailModalOpen(true);
   };
 
   const handleAddAthlete = async () => {
@@ -266,6 +274,7 @@ export default function Athletes() {
                 onMarkInactive={markAsInactive}
                 onEdit={isAdmin ? handleEditAthlete : undefined}
                 onDelete={isAdmin ? handleDeleteAthlete : undefined}
+                onViewDetails={handleViewDetails}
                 isStaffView={userRole === 'staff'}
               />
             ))
@@ -489,6 +498,14 @@ export default function Athletes() {
         athlete={selectedAthlete}
         onConfirm={handleConfirmDelete}
         isLoading={isDeleting}
+      />
+
+      <AthleteDetailModal
+        open={detailModalOpen}
+        onOpenChange={setDetailModalOpen}
+        athlete={selectedAthlete}
+        transactions={transactions}
+        currencySymbol={currencySymbol}
       />
     </AppLayout>
   );
