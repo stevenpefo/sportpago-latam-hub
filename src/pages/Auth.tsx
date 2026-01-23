@@ -27,7 +27,7 @@ const nameSchema = z.string().min(2, 'El nombre debe tener al menos 2 caracteres
 export default function Auth() {
   const navigate = useNavigate();
   const { signIn, signUp, signInWithAccessCode } = useAuthContext();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const { toast } = useToast();
   
   // Login state
@@ -218,7 +218,7 @@ export default function Auth() {
     }
   };
 
-  const { language, setLanguage } = useLanguage();
+  
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative">
