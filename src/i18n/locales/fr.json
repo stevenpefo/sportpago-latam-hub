@@ -152,7 +152,10 @@
     "methodDeleted": "Méthode supprimée",
     "language": "Langue",
     "languageDesc": "Sélectionnez votre langue préférée",
-    "languageChanged": "Langue changée en {{language}}"
+    "languageChanged": "Langue changée en {{language}}",
+    "tutorial": "Tutoriel",
+    "tutorialDesc": "Révisez les fonctionnalités principales de l'application",
+    "repeatTutorial": "Répéter le tutoriel"
   },
   "transactions": {
     "title": "Transactions",

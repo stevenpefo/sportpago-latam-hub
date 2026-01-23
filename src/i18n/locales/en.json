@@ -152,7 +152,10 @@
     "methodDeleted": "Method deleted",
     "language": "Language",
     "languageDesc": "Select your preferred language",
-    "languageChanged": "Language changed to {{language}}"
+    "languageChanged": "Language changed to {{language}}",
+    "tutorial": "Tutorial",
+    "tutorialDesc": "Review the main features of the application",
+    "repeatTutorial": "Repeat tutorial"
   },
   "transactions": {
     "title": "Transactions",
