@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { AppFooter } from "@/components/layout/AppFooter";
 
 export default function TermsOfService() {
   const navigate = useNavigate();
@@ -190,13 +191,10 @@ export default function TermsOfService() {
             </div>
           </section>
 
-          <div className="mt-12 pt-6 border-t text-center">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} SportPago. Todos los derechos reservados.
-            </p>
-          </div>
         </div>
       </main>
+
+      <AppFooter />
     </div>
   );
 }
