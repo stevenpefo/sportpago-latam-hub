@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { AppFooter } from '@/components/layout/AppFooter';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -725,6 +726,9 @@ export default function Settings() {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Footer */}
+        <AppFooter />
       </div>
 
       {/* Onboarding Tutorial Modal */}
