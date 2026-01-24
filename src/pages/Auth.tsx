@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import logoSportPago from '@/assets/logo-sportpago.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -481,9 +481,20 @@ export default function Auth() {
       </Card>
 
       {/* Footer */}
-      <p className="mt-8 text-center text-xs text-muted-foreground">
-        SportPago © 2025 • {t('login.footerTagline')}
-      </p>
+      <div className="mt-8 text-center space-y-2">
+        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+          <Link to="/privacy" className="hover:text-primary transition-colors">
+            {t('legal.privacyPolicy')}
+          </Link>
+          <span>•</span>
+          <Link to="/terms" className="hover:text-primary transition-colors">
+            {t('legal.termsOfService')}
+          </Link>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          SportPago © 2025 • {t('login.footerTagline')}
+        </p>
+      </div>
     </div>
   );
 }
