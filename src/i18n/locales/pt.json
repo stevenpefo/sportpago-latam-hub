@@ -190,7 +190,17 @@
     "languageChanged": "Idioma alterado para {{language}}",
     "tutorial": "Tutorial",
     "tutorialDesc": "Revise as principais funcionalidades do aplicativo",
-    "repeatTutorial": "Repetir tutorial"
+    "repeatTutorial": "Repetir tutorial",
+    "notifications": "Lembretes de Vencimento",
+    "notificationsDesc": "Configure quando deseja receber avisos de vencimento de mensalidades",
+    "notifyDaysBefore": "Notificar",
+    "notifyOption0": "No mesmo dia",
+    "notifyOption1": "1 dia antes",
+    "notifyOption2": "2 dias antes",
+    "notifyOption3": "3 dias antes",
+    "notifyOption5": "5 dias antes",
+    "notifyOption7": "1 semana antes",
+    "notificationsSaved": "Configuração de notificações salva"
   },
   "transactions": {
     "title": "Transações",

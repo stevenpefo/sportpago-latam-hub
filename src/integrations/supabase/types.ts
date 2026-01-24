@@ -139,6 +139,7 @@ export type Database = {
           codigo_club: string
           configuracion_completa: boolean
           created_at: string
+          dias_aviso_vencimiento: number
           id: string
           logo_url: string | null
           moneda: string
@@ -153,6 +154,7 @@ export type Database = {
           codigo_club: string
           configuracion_completa?: boolean
           created_at?: string
+          dias_aviso_vencimiento?: number
           id?: string
           logo_url?: string | null
           moneda?: string
@@ -167,6 +169,7 @@ export type Database = {
           codigo_club?: string
           configuracion_completa?: boolean
           created_at?: string
+          dias_aviso_vencimiento?: number
           id?: string
           logo_url?: string | null
           moneda?: string

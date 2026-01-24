@@ -24,6 +24,7 @@ const transformEstablecimiento = (dbEstab: any, paymentMethods: PaymentMethod[])
   configuracionCompleta: dbEstab.configuracion_completa,
   logoUrl: dbEstab.logo_url || undefined,
   codigoClub: dbEstab.codigo_club || undefined,
+  diasAvisoVencimiento: dbEstab.dias_aviso_vencimiento ?? 1,
 });
 
 export function useEstablecimiento() {

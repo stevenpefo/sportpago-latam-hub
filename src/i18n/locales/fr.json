@@ -190,7 +190,17 @@
     "languageChanged": "Langue changée en {{language}}",
     "tutorial": "Tutoriel",
     "tutorialDesc": "Révisez les fonctionnalités principales de l'application",
-    "repeatTutorial": "Répéter le tutoriel"
+    "repeatTutorial": "Répéter le tutoriel",
+    "notifications": "Rappels d'Échéance",
+    "notificationsDesc": "Configurez quand vous souhaitez recevoir les rappels de paiement",
+    "notifyDaysBefore": "Notifier",
+    "notifyOption0": "Le même jour",
+    "notifyOption1": "1 jour avant",
+    "notifyOption2": "2 jours avant",
+    "notifyOption3": "3 jours avant",
+    "notifyOption5": "5 jours avant",
+    "notifyOption7": "1 semaine avant",
+    "notificationsSaved": "Paramètres de notification enregistrés"
   },
   "transactions": {
     "title": "Transactions",

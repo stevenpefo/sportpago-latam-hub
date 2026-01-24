@@ -36,6 +36,7 @@ import {
   GraduationCap,
   Copy,
   Check,
+  Bell,
 } from 'lucide-react';
 import { COUNTRIES, DEFAULT_PAYMENT_METHODS, SPORTS } from '@/data/countries';
 import { LANGUAGES, Language } from '@/i18n';
@@ -645,6 +646,59 @@ export default function Settings() {
                   </span>
                 </button>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Notification Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Bell className="h-5 w-5 text-primary" />
+              {t('settings.notifications')}
+            </CardTitle>
+            <CardDescription>
+              {t('settings.notificationsDesc')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <Label>{t('settings.notifyDaysBefore')}</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {[
+                  { value: 0, label: t('settings.notifyOption0') },
+                  { value: 1, label: t('settings.notifyOption1') },
+                  { value: 2, label: t('settings.notifyOption2') },
+                  { value: 3, label: t('settings.notifyOption3') },
+                  { value: 5, label: t('settings.notifyOption5') },
+                  { value: 7, label: t('settings.notifyOption7') },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      setupEstablecimiento({ diasAvisoVencimiento: option.value });
+                      toast({
+                        title: t('settings.notificationsSaved'),
+                        description: option.label,
+                      });
+                    }}
+                    className={cn(
+                      'flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all min-h-[52px]',
+                      establecimiento?.diasAvisoVencimiento === option.value
+                        ? 'border-primary bg-primary/10 text-primary font-medium'
+                        : 'border-border hover:border-primary/50 text-muted-foreground'
+                    )}
+                  >
+                    <Bell className={cn(
+                      'h-4 w-4',
+                      establecimiento?.diasAvisoVencimiento === option.value 
+                        ? 'text-primary' 
+                        : 'text-muted-foreground'
+                    )} />
+                    <span className="text-sm">{option.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
