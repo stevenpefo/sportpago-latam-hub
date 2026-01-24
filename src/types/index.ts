@@ -32,6 +32,7 @@ export interface Establecimiento {
   configuracionCompleta: boolean;
   logoUrl?: string;
   codigoClub?: string;
+  diasAvisoVencimiento: number;
 }
 
 export interface AdminUser {

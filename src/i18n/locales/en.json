@@ -190,7 +190,17 @@
     "languageChanged": "Language changed to {{language}}",
     "tutorial": "Tutorial",
     "tutorialDesc": "Review the main features of the application",
-    "repeatTutorial": "Repeat tutorial"
+    "repeatTutorial": "Repeat tutorial",
+    "notifications": "Due Date Reminders",
+    "notificationsDesc": "Configure when you want to receive payment due reminders",
+    "notifyDaysBefore": "Notify",
+    "notifyOption0": "Same day",
+    "notifyOption1": "1 day before",
+    "notifyOption2": "2 days before",
+    "notifyOption3": "3 days before",
+    "notifyOption5": "5 days before",
+    "notifyOption7": "1 week before",
+    "notificationsSaved": "Notification settings saved"
   },
   "transactions": {
     "title": "Transactions",

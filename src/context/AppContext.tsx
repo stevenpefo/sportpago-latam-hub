@@ -201,6 +201,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         zonaHoraria: 'America/Bogota',
         metodosPago: DEFAULT_PAYMENT_METHODS,
         configuracionCompleta: true,
+        diasAvisoVencimiento: 1,
       };
 
       setState(prev => ({
@@ -229,6 +230,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         zonaHoraria: 'America/Bogota',
         metodosPago: DEFAULT_PAYMENT_METHODS,
         configuracionCompleta: true,
+        diasAvisoVencimiento: 1,
       };
 
       setState(prev => {
