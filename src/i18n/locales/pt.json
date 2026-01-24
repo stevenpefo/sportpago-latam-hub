@@ -345,5 +345,9 @@
     "filterByMethod": "Filtrar por método",
     "allMethods": "Todos os métodos",
     "clear": "Limpar"
+  },
+  "legal": {
+    "privacyPolicy": "Política de Privacidade",
+    "termsOfService": "Termos de Serviço"
   }
 }
