@@ -253,12 +253,12 @@ export default function Landing() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
             >
-              <Link to="/auth">
+              <a href="#pricing">
                 <Button size="lg" className="text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105">
                   Comenzar Ahora
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              </Link>
+              </a>
               <p className="text-sm text-muted-foreground">
                 Configura en minutos • Cancela cuando quieras
               </p>
@@ -295,14 +295,16 @@ export default function Landing() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-primary/20 bg-card">
                 <video
                   ref={videoRef}
-                  src={demoVideo}
                   className="w-full aspect-video object-cover"
                   loop
                   muted
                   playsInline
                   autoPlay
                   onClick={togglePlayPause}
-                />
+                >
+                  <source src={demoVideo} type="video/mp4" />
+                  Tu navegador no soporta videos HTML5.
+                </video>
                 {!isPlaying && (
                   <motion.button
                     initial={{ scale: 0.8, opacity: 0 }}
@@ -729,7 +731,7 @@ export default function Landing() {
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Únete a cientos de academias que ya recuperaron el control de sus finanzas.
           </p>
-          <Link to="/auth">
+          <a href="#pricing">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
@@ -739,7 +741,7 @@ export default function Landing() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </motion.div>
-          </Link>
+          </a>
         </motion.div>
       </section>
 
