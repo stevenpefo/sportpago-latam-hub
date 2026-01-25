@@ -185,12 +185,12 @@ export default function Landing() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Link to="/auth">
                 <Button size="lg" className="text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-xl transition-all">
-                  Prueba Gratis 14 Días
+                  Comenzar Ahora
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <p className="text-sm text-muted-foreground">
-                Sin tarjeta de crédito • Cancela cuando quieras
+                Configura en minutos • Cancela cuando quieras
               </p>
             </div>
 
@@ -392,12 +392,11 @@ export default function Landing() {
             ¿Listo para dejar de perder dinero?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Únete a cientos de academias que ya recuperaron el control de sus finanzas. 
-            Empieza gratis hoy mismo.
+            Únete a cientos de academias que ya recuperaron el control de sus finanzas.
           </p>
           <Link to="/auth">
             <Button size="lg" className="text-lg px-10 py-6 font-semibold shadow-lg hover:shadow-xl transition-all">
-              Crear Mi Cuenta Gratis
+              Elegir Mi Plan
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
