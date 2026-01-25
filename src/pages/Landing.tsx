@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppFooter } from "@/components/layout/AppFooter";
+import { motion } from "framer-motion";
 
 const plans = [
   {
@@ -142,15 +143,46 @@ const testimonials = [
   },
 ];
 
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1 }
+};
+
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero Section */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
           {/* Navigation */}
-          <nav className="flex items-center justify-between mb-16">
+          <motion.nav 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-between mb-16"
+          >
             <div className="flex items-center gap-2">
               <img 
                 src="/logo-sportpago.png" 
@@ -163,28 +195,49 @@ export default function Landing() {
                 Iniciar Sesión
               </Button>
             </Link>
-          </nav>
+          </motion.nav>
 
           {/* Hero Content */}
           <div className="text-center max-w-4xl mx-auto">
-            <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
-              <Zap className="w-4 h-4 mr-2 inline" />
-              +500 academias ya confían en nosotros
-            </Badge>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
+                <Zap className="w-4 h-4 mr-2 inline" />
+                +500 academias ya confían en nosotros
+              </Badge>
+            </motion.div>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight"
+            >
               Deja de Perder Dinero por
               <span className="text-primary block mt-2">Pagos Olvidados</span>
-            </h1>
+            </motion.h1>
             
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
+            >
               El sistema más simple para que <strong>academias deportivas y gimnasios</strong> controlen 
               las mensualidades de sus atletas. Sin hojas de Excel. Sin confusiones. Sin pagos perdidos.
-            </p>
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+            >
               <Link to="/auth">
-                <Button size="lg" className="text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-xl transition-all">
+                <Button size="lg" className="text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105">
                   Comenzar Ahora
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -192,10 +245,15 @@ export default function Landing() {
               <p className="text-sm text-muted-foreground">
                 Configura en minutos • Cancela cuando quieras
               </p>
-            </div>
+            </motion.div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground"
+            >
               <div className="flex items-center gap-2">
                 <Globe className="h-5 w-5 text-primary" />
                 <span>Disponible en 4 idiomas</span>
@@ -208,7 +266,7 @@ export default function Landing() {
                 <Shield className="h-5 w-5 text-primary" />
                 <span>Datos 100% seguros</span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </header>
@@ -216,178 +274,313 @@ export default function Landing() {
       {/* Problem Section */}
       <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
             <h2 className="text-3xl font-bold text-foreground mb-4">
               ¿Te suena familiar?
             </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-background p-6 rounded-xl border border-destructive/20 shadow-sm">
-              <div className="text-4xl mb-4">😰</div>
-              <h3 className="font-semibold text-lg mb-2">"No sé quién me debe"</h3>
-              <p className="text-muted-foreground">Pierdes tiempo buscando en libretas o Excel quién pagó y quién no.</p>
-            </div>
-            <div className="bg-background p-6 rounded-xl border border-destructive/20 shadow-sm">
-              <div className="text-4xl mb-4">💸</div>
-              <h3 className="font-semibold text-lg mb-2">"Se me olvida cobrar"</h3>
-              <p className="text-muted-foreground">Los meses pasan y cuando te das cuenta, ya perdiste ingresos.</p>
-            </div>
-            <div className="bg-background p-6 rounded-xl border border-destructive/20 shadow-sm">
-              <div className="text-4xl mb-4">📊</div>
-              <h3 className="font-semibold text-lg mb-2">"No tengo control"</h3>
-              <p className="text-muted-foreground">No sabes cuánto deberías estar facturando al mes realmente.</p>
-            </div>
-          </div>
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {[
+              { emoji: "😰", title: '"No sé quién me debe"', desc: "Pierdes tiempo buscando en libretas o Excel quién pagó y quién no." },
+              { emoji: "💸", title: '"Se me olvida cobrar"', desc: "Los meses pasan y cuando te das cuenta, ya perdiste ingresos." },
+              { emoji: "📊", title: '"No tengo control"', desc: "No sabes cuánto deberías estar facturando al mes realmente." },
+            ].map((item, index) => (
+              <motion.div 
+                key={index}
+                variants={fadeInUp}
+                transition={{ duration: 0.5 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                className="bg-background p-6 rounded-xl border border-destructive/20 shadow-sm"
+              >
+                <div className="text-4xl mb-4">{item.emoji}</div>
+                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                <p className="text-muted-foreground">{item.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Todo lo que necesitas para cobrar sin estrés
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Herramientas simples pero poderosas diseñadas específicamente para el mundo deportivo.
             </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             {features.map((feature, index) => (
-              <div key={index} className="group p-6 rounded-2xl bg-card border hover:border-primary/50 hover:shadow-lg transition-all duration-300">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+              <motion.div 
+                key={index} 
+                variants={fadeInUp}
+                transition={{ duration: 0.5 }}
+                whileHover={{ scale: 1.03, y: -5 }}
+                className="group p-6 rounded-2xl bg-card border hover:border-primary/50 hover:shadow-lg transition-all duration-300"
+              >
+                <motion.div 
+                  whileHover={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 0.5 }}
+                  className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors"
+                >
                   <feature.icon className="h-6 w-6 text-primary" />
-                </div>
+                </motion.div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground">{feature.description}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Target Audience Section */}
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-3xl font-bold text-foreground mb-4">
               ¿Para quién es SportPago?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Si cobras mensualidades a deportistas o atletas, SportPago es para ti.
             </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {targetAudience.map((item, index) => (
-              <div key={index} className="bg-background p-6 rounded-xl border hover:shadow-md transition-shadow">
-                <div className="text-4xl mb-4">{item.icon}</div>
+              <motion.div 
+                key={index} 
+                variants={fadeInUp}
+                transition={{ duration: 0.5 }}
+                whileHover={{ scale: 1.03 }}
+                className="bg-background p-6 rounded-xl border hover:shadow-md transition-shadow"
+              >
+                <motion.div 
+                  initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="text-4xl mb-4"
+                >
+                  {item.icon}
+                </motion.div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">{item.title}</h3>
                 <p className="text-muted-foreground text-sm">{item.description}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Testimonials */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Lo que dicen nuestros usuarios
             </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid md:grid-cols-3 gap-8"
+          >
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-card">
-                <CardContent className="pt-6">
-                  <div className="flex mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-foreground mb-4 italic">"{testimonial.quote}"</p>
-                  <div>
-                    <p className="font-semibold text-foreground">{testimonial.author}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <motion.div
+                key={index}
+                variants={scaleIn}
+                transition={{ duration: 0.5 }}
+                whileHover={{ y: -5 }}
+              >
+                <Card className="bg-card h-full">
+                  <CardContent className="pt-6">
+                    <div className="flex mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.1 }}
+                        >
+                          <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                        </motion.div>
+                      ))}
+                    </div>
+                    <p className="text-foreground mb-4 italic">"{testimonial.quote}"</p>
+                    <div>
+                      <p className="font-semibold text-foreground">{testimonial.author}</p>
+                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Pricing Section */}
       <section className="py-20 bg-muted/30" id="pricing">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Planes simples, sin sorpresas
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Elige el plan que mejor se adapte a tu academia. Todos incluyen deportistas ilimitados.
             </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+          >
             {plans.map((plan, index) => (
-              <Card 
-                key={index} 
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
-                  plan.popular ? 'border-primary shadow-lg scale-105 z-10' : 'hover:border-primary/50'
-                }`}
+              <motion.div
+                key={index}
+                variants={scaleIn}
+                transition={{ duration: 0.5 }}
+                whileHover={{ y: -10, scale: plan.popular ? 1.02 : 1.05 }}
               >
-                {plan.popular && (
-                  <div className="absolute top-0 right-0">
-                    <Badge className="rounded-none rounded-bl-lg bg-primary text-primary-foreground px-3 py-1">
-                      Más Popular
-                    </Badge>
-                  </div>
-                )}
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center pb-6">
-                  <div className="mb-6">
-                    {plan.originalPrice && (
-                      <span className="text-lg text-muted-foreground line-through mr-2">
-                        ${plan.originalPrice}
-                      </span>
-                    )}
-                    <span className="text-5xl font-bold text-foreground">${plan.price}</span>
-                    <span className="text-muted-foreground ml-1">{plan.period}</span>
-                  </div>
-                  <ul className="space-y-3 text-left">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    className="w-full py-6 text-lg font-semibold" 
-                    variant={plan.popular ? "default" : "outline"}
-                    size="lg"
-                  >
-                    {plan.cta}
-                  </Button>
-                </CardFooter>
-              </Card>
+                <Card 
+                  className={`relative overflow-hidden transition-all duration-300 h-full ${
+                    plan.popular ? 'border-primary shadow-lg scale-105 z-10' : 'hover:border-primary/50'
+                  }`}
+                >
+                  {plan.popular && (
+                    <motion.div 
+                      initial={{ x: 100 }}
+                      animate={{ x: 0 }}
+                      transition={{ delay: 0.5, type: "spring" }}
+                      className="absolute top-0 right-0"
+                    >
+                      <Badge className="rounded-none rounded-bl-lg bg-primary text-primary-foreground px-3 py-1">
+                        Más Popular
+                      </Badge>
+                    </motion.div>
+                  )}
+                  <CardHeader className="text-center pb-4">
+                    <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                    <CardDescription>{plan.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center pb-6">
+                    <div className="mb-6">
+                      {plan.originalPrice && (
+                        <span className="text-lg text-muted-foreground line-through mr-2">
+                          ${plan.originalPrice}
+                        </span>
+                      )}
+                      <span className="text-5xl font-bold text-foreground">${plan.price}</span>
+                      <span className="text-muted-foreground ml-1">{plan.period}</span>
+                    </div>
+                    <ul className="space-y-3 text-left">
+                      {plan.features.map((feature, featureIndex) => (
+                        <motion.li 
+                          key={featureIndex} 
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ delay: featureIndex * 0.1 }}
+                          viewport={{ once: true }}
+                          className="flex items-start gap-3"
+                        >
+                          <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-muted-foreground">{feature}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardFooter>
+                    <Button 
+                      className="w-full py-6 text-lg font-semibold transition-all hover:scale-105" 
+                      variant={plan.popular ? "default" : "outline"}
+                      size="lg"
+                    >
+                      {plan.cta}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-          <p className="text-center text-sm text-muted-foreground mt-8">
+          </motion.div>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="text-center text-sm text-muted-foreground mt-8"
+          >
             * Precios en USD. Aceptamos pagos en moneda local.
-          </p>
+          </motion.p>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+        >
           <h2 className="text-3xl font-bold text-foreground mb-4">
             ¿Listo para dejar de perder dinero?
           </h2>
@@ -395,12 +588,17 @@ export default function Landing() {
             Únete a cientos de academias que ya recuperaron el control de sus finanzas.
           </p>
           <Link to="/auth">
-            <Button size="lg" className="text-lg px-10 py-6 font-semibold shadow-lg hover:shadow-xl transition-all">
-              Elegir Mi Plan
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button size="lg" className="text-lg px-10 py-6 font-semibold shadow-lg hover:shadow-xl transition-all">
+                Elegir Mi Plan
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </motion.div>
           </Link>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer */}
