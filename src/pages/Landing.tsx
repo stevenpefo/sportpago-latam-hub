@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { Check, Users, CreditCard, Bell, BarChart3, Shield, Smartphone, Globe, Clock, Star, ArrowRight, Zap, Play } from "lucide-react";
+import { Check, Users, CreditCard, Bell, BarChart3, Shield, Smartphone, Globe, Clock, Star, ArrowRight, Zap, Play, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppFooter } from "@/components/layout/AppFooter";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
 import demoVideo from "@/assets/demo-video.mp4";
@@ -623,6 +624,92 @@ export default function Landing() {
           >
             * Precios en USD. Aceptamos pagos en moneda local.
           </motion.p>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <HelpCircle className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Preguntas Frecuentes
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Resolvemos las dudas más comunes sobre SportPago
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+          >
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {[
+                {
+                  question: "¿Cuántos deportistas puedo registrar?",
+                  answer: "¡Ilimitados! Todos nuestros planes incluyen deportistas ilimitados. No importa si tienes 10 o 1,000 atletas, el precio no cambia."
+                },
+                {
+                  question: "¿Puedo usar SportPago en mi celular?",
+                  answer: "Sí, SportPago está diseñado 100% para funcionar en dispositivos móviles. Puedes gestionar tu academia desde cualquier smartphone o tablet, sin necesidad de instalar ninguna aplicación."
+                },
+                {
+                  question: "¿Cómo funciona el sistema de alertas de pagos?",
+                  answer: "Usamos un sistema de semáforo visual: Verde para deportistas al día, Amarillo para pagos próximos a vencer, y Rojo para pagos vencidos. Así puedes identificar de un vistazo quién necesita atención."
+                },
+                {
+                  question: "¿Puedo agregar asistentes para que me ayuden?",
+                  answer: "¡Por supuesto! Puedes invitar a tu equipo con permisos controlados. Ellos pueden registrar pagos y gestionar deportistas sin acceso a información financiera sensible."
+                },
+                {
+                  question: "¿En qué moneda puedo cobrar?",
+                  answer: "SportPago se adapta a tu país. Soportamos múltiples monedas latinoamericanas y puedes configurar el símbolo y formato de moneda que prefieras para tu academia."
+                },
+                {
+                  question: "¿Qué pasa si quiero cancelar mi suscripción?",
+                  answer: "Puedes cancelar en cualquier momento sin penalidades. Tu cuenta seguirá activa hasta el final del período pagado y podrás exportar todos tus datos."
+                },
+                {
+                  question: "¿Mis datos están seguros?",
+                  answer: "Absolutamente. Usamos encriptación de nivel bancario y servidores seguros. Tus datos y los de tus deportistas están protegidos con los más altos estándares de seguridad."
+                },
+                {
+                  question: "¿Ofrecen soporte técnico?",
+                  answer: "Sí, todos los planes incluyen soporte por email. Los planes Semestral y Anual tienen soporte prioritario, y el plan Anual incluye soporte VIP 24/7 con capacitación personalizada."
+                }
+              ].map((faq, index) => (
+                <motion.div
+                  key={index}
+                  variants={fadeInUp}
+                  transition={{ duration: 0.3 }}
+                >
+                  <AccordionItem 
+                    value={`item-${index}`} 
+                    className="bg-card border rounded-xl px-6 data-[state=open]:shadow-md transition-shadow"
+                  >
+                    <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary transition-colors py-5">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground pb-5 leading-relaxed">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                </motion.div>
+              ))}
+            </Accordion>
+          </motion.div>
         </div>
       </section>
 
