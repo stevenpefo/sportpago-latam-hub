@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
-import { Check, Users, CreditCard, Bell, BarChart3, Shield, Smartphone, Globe, Clock, Star, ArrowRight, Zap } from "lucide-react";
+import { Check, Users, CreditCard, Bell, BarChart3, Shield, Smartphone, Globe, Clock, Star, ArrowRight, Zap, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppFooter } from "@/components/layout/AppFooter";
 import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import demoVideo from "@/assets/demo-video.mp4";
 
 const plans = [
   {
@@ -170,6 +172,20 @@ const scaleIn = {
 };
 
 export default function Landing() {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const togglePlayPause = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero Section */}
@@ -252,7 +268,7 @@ export default function Landing() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground"
+              className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground mb-12"
             >
               <div className="flex items-center gap-2">
                 <Globe className="h-5 w-5 text-primary" />
@@ -266,6 +282,45 @@ export default function Landing() {
                 <Shield className="h-5 w-5 text-primary" />
                 <span>Datos 100% seguros</span>
               </div>
+            </motion.div>
+
+            {/* Demo Video */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="relative max-w-3xl mx-auto"
+            >
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-primary/20 bg-card">
+                <video
+                  ref={videoRef}
+                  src={demoVideo}
+                  className="w-full aspect-video object-cover"
+                  loop
+                  muted
+                  playsInline
+                  autoPlay
+                  onClick={togglePlayPause}
+                />
+                {!isPlaying && (
+                  <motion.button
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={togglePlayPause}
+                    className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm transition-all"
+                  >
+                    <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center shadow-lg">
+                      <Play className="w-8 h-8 text-primary-foreground ml-1" fill="currentColor" />
+                    </div>
+                  </motion.button>
+                )}
+                <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
+              </div>
+              <p className="text-sm text-muted-foreground mt-4 text-center">
+                Mira cómo SportPago simplifica la gestión de tu academia
+              </p>
             </motion.div>
           </div>
         </div>
