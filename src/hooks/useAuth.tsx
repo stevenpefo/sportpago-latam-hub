@@ -138,40 +138,41 @@ export function useAuth() {
     return { error: null, user: data.user };
   };
 
-  // Sign in with club code + staff access code
+  // Sign in with club code + staff access code (using secure RPC functions)
   const signInWithAccessCode = async (clubCode: string, accessCode: string) => {
-    // First, find the establishment by club code
-    const { data: estabData, error: estabError } = await supabase
-      .from('establecimientos')
-      .select('id')
-      .eq('codigo_club', clubCode.toUpperCase())
-      .maybeSingle();
+    // Use secure RPC function to verify club code (no direct table access)
+    const { data: estabId, error: estabError } = await supabase
+      .rpc('verify_club_code' as never, { _club_code: clubCode } as never);
 
-    if (estabError || !estabData) {
+    if (estabError || !estabId) {
       return { error: 'invalidClubCode' };
     }
 
-    // Find staff by establishment + access code
-    const { data: staffData, error: staffError } = await supabase
-      .from('staff_users')
-      .select('id, nombre, user_id, establecimiento_id, activo')
-      .eq('establecimiento_id', estabData.id)
-      .eq('codigo_acceso', accessCode)
-      .eq('activo', true)
-      .maybeSingle();
+    // Use secure RPC function to verify staff access code
+    const { data: staffDataRaw, error: staffError } = await supabase
+      .rpc('verify_staff_access' as never, { 
+        _establecimiento_id: estabId, 
+        _codigo_acceso: accessCode 
+      } as never);
+
+    const staffData = staffDataRaw as { 
+      id: string; 
+      nombre: string; 
+      user_id: string | null; 
+      establecimiento_id: string; 
+      activo: boolean; 
+    } | null;
 
     if (staffError || !staffData) {
       return { error: 'invalidPin' };
     }
 
-    // If staff has a linked user_id, check if there's an active session
+    // If staff has a linked user_id, they should use email/password
     if (staffData.user_id) {
-      // User already linked, they should use email/password
       return { error: 'codeAlreadyLinked' };
     }
 
-    // For staff without user_id, we'll store their info in sessionStorage temporarily
-    // and redirect them to complete registration or work in a limited mode
+    // For staff without user_id, store their info in sessionStorage temporarily
     sessionStorage.setItem('staff_session', JSON.stringify({
       staffId: staffData.id,
       nombre: staffData.nombre,
