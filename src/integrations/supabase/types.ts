@@ -431,6 +431,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      verify_club_code: { Args: { _club_code: string }; Returns: string }
+      verify_staff_access: {
+        Args: { _codigo_acceso: string; _establecimiento_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "staff"
