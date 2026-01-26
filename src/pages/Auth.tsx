@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import logoSportPago from '@/assets/logo-sportpago.png';
+import logoSportPago from '@/assets/logo-sportpago-optimized.webp';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -252,6 +252,9 @@ export default function Auth() {
           src={logoSportPago} 
           alt="SportPago Logo" 
           className="h-20 w-20 mx-auto mb-4 drop-shadow-lg"
+          width={80}
+          height={80}
+          fetchPriority="high"
         />
         <h1 className="text-3xl font-bold text-foreground">SportPago</h1>
         <p className="text-muted-foreground mt-1">{t('login.tagline')}</p>
