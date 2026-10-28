@@ -1,21 +1,44 @@
-# SportPago internacional: una sola base Supabase para Colombia y USA
+# SportPago internacional — Supabase compartido Colombia + USA
 
-**Decisión 28/10/2026:** mantener Supabase Free actual para ambos países. No crear proyecto adicional. Los entrenadores de Colombia siguen en Lovable sin interrupción.
+**Decisión confirmada 28/10/2026:** reutilizar Supabase Free existente, sin crear otro proyecto. Los clubes colombianos continúan en la URL de Lovable; el frontend internacional se probará en una URL web distinta conectada al mismo backend, con permisos por club.
 
-## Paso 1 — auditoría sin riesgo
-Abrir `docs/sql/03_AUDIT_EXISTING_SUPABASE_READ_ONLY.sql`, ejecutarlo desde SQL Editor de Supabase EXISTENTE y compartir el resultado. Es únicamente SELECT sobre metadatos. Confirma tablas, columnas, funciones y RLS, sin revelar datos personales de deportistas.
+## Auditoría que compartió el propietario
+Existen y tienen RLS activo: `athletes`, `establecimientos`, `payment_methods`, `profiles`, `staff_users`, `transactions`, `user_roles`. No existen aún `athlete_join_requests` ni `club_join_links`. La inspección de columnas que lleva el nuevo SQL también debe aprobarse antes de efectuar cambios.
 
-## Paso 2 — migración aditiva, todavía NO aprobada ni aplicada
-Tras estudiar el resultado del paso 1, preparar script de cambios exclusivamente **CREATE** de nuevas tablas `club_join_links` y `athlete_join_requests`, índices, políticas y RPC relacionadas, evitando recrear, alterar o borrar tablas existentes de clubes, atletas y pagos. Revisión previa de conflictos, permisos y restauración.
-**NO ejecutar `docs/sql/01_BOOTSTRAP_USA_STAGING_ONLY.sql` en la base existente.** Ese archivo es para instalaciones vacías y fallará por su protección.
+## Paso siguiente: instalar solo la autoinscripción
+**Previamente:** respaldar/exportar las tablas críticas `athletes`, `establecimientos`, `transactions` y guardar el esquema SQL actual.
 
-## Paso 3 — UI con acceso controlado
-La rama `feat/club-self-enrollment-staging` tiene una función desactivada por defecto; no está desplegada en Colombia. El mecanismo actual de despliegue Vercel rechaza Supabase existente por su protección de aislamiento. **Después de auditar la base** se reemplazará por un mecanismo de publicación consciente para compartir el backend, con feature flag exclusivo de la URL de pruebas, permitiendo que solo el proyecto de frontend de pruebas muestre los botones. No modificar la URL de producción de Lovable, ni Capacitor, ni los roles/pagos existentes.
-Revisar también los Auth Redirect URLs específicos para la URL de preview cuando se conozca.
+**Ejecutar SOLO UNA VEZ:** `docs/sql/04_ADD_CLUB_SELF_REGISTRATION_EXISTING_SUPABASE.sql` en SQL Editor del Supabase actual. Es una transacción protegida: comprueba tablas, columnas, RLS y posibles conflictos con las cinco funciones nuevas antes de crear nada. Instala dos tablas nuevas y sus permisos; no actualiza ni borra filas existentes de `athletes` o `transactions`.
 
-## Paso 4 — pruebas de dos clubes
-Usar dos clubes ficticios o usuarios de ensayo autorizados; confirmar que la invitación A no registra en club B, que pendientes no afectan pagos y que aprobar solo es posible por el administrador correcto. Para menores, deben intervenir padres o tutores. Sin correo/Resend en esta fase: formulario + aprobación.
-Para futuros correos con Resend, las claves privadas solo en funciones seguras del servidor.
+**Resultado esperado:** `OK - autoinscripción instalada sin alterar las tablas existentes`, `enlaces_iniciales = 0`, `solicitudes_iniciales = 0`. Si arroja error, no repetir a ciegas; enviar el mensaje completo.
 
-## Control de cambios
-No fusionar PR #2 ni publicar a la app Lovable de Colombia durante estas pruebas. Mantener respaldo exportable de datos antes de aplicar migraciones en la base existente.
+**NUNCA EJECUTAR** `docs/sql/01_BOOTSTRAP_USA_STAGING_ONLY.sql` en Supabase actual: recrea el esquema entero y es solo para proyecto vacío.
+
+## Frontend web USA/preview
+Branch: `feat/club-self-enrollment-staging`; PR borrador #2. Archivo `vercel.json` configura fallback para rutas web `/join/:token` y exige el control `scripts/assert-shared-preview-env.mjs` antes de construir.
+
+Variables en Vercel **solo para este nuevo sitio preview**, nunca Lovable Colombia:
+- `VITE_DEPLOY_TARGET=preview-shared`
+- `VITE_ENABLE_CLUB_INVITES=true`
+- `VITE_SUPABASE_PROJECT_ID=chklvnjudaschthbqgsc`
+- `VITE_SUPABASE_URL=https://chklvnjudaschthbqgsc.supabase.co`
+- `VITE_SUPABASE_PUBLISHABLE_KEY` = la **clave pública anon/publishable**, no service_role ni secret key. Configurarla en Vercel, no guardar en Git.
+
+El frontend preview comparte datos existentes, por lo que **no es un sandbox de datos**. Usar solicitudes ficticias, no datos reales de menores mientras no se completen medidas de privacidad. No fusionar PR #2 ni cambiar URL de Lovable o configuración de APK.
+
+## Pruebas obligatorias antes del lanzamiento público
+1. Dos entrenadores con clubes distintos (preferiblemente cuentas ficticias). Verificar que las vistas no muestran datos del otro.
+2. Crear enlace A, enviar solicitud anónima de un deportista ficticio, ver pendientes y aprobarla con admin A.
+3. Probar enlace B, rechazar, revocar/rotar token, duplicados y datos malformados.
+4. Reconfirmar inserción manual de deportistas y operaciones de pagos con datos ficticios (sin tocar transacciones reales).
+5. Revisar la política de privacidad, consentimiento verificable en casos de menores, CAPTCHA/anti-spam y retención de datos antes de compartir el enlace con familias reales.
+6. Verificar registro desde Safari en iPhone y Chrome en Android, sin instalación obligatoria.
+
+## Resend
+No es necesario en este primer paso. Solo después, para avisos transaccionales; claves en funciones seguras del servidor, nunca variables `VITE_*`.
+
+## Estado
+- Auditoría: siete tablas existentes con RLS y dos pendientes verificadas por el usuario.
+- SQL 04: escrito, todavía NO ejecutado en la base compartida.
+- Web preview: código preparado, todavía SIN enlace desplegado.
+- Producción Colombia: aún sin cambios de esquema ni frontend a través de este flujo.
