@@ -129,4 +129,4 @@ try{
   if(browser)await browser.close();
   server.kill('SIGTERM');
 }
-if(process.exitCode)process.exit(process.exitCode);
+process.exit(process.exitCode || 0);
