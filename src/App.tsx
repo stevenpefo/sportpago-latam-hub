@@ -17,6 +17,7 @@ import Install from "./pages/Install";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Landing from "./pages/Landing";
+import Explore from "./pages/Explore";
 
 const queryClient = new QueryClient();
 
@@ -106,6 +107,7 @@ function AppRoutes() {
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/landing" element={<Landing />} />
+      <Route path="/explore" element={<Explore />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
