@@ -1,0 +1,46 @@
+name: SportPago USA - staging preview bundle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  staging-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_DEPLOY_TARGET: staging
+      VITE_ENABLE_CLUB_INVITES: 'true'
+      VITE_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.STAGING_SUPABASE_PUBLISHABLE_KEY }}
+      VITE_SUPABASE_PROJECT_ID: ${{ secrets.STAGING_SUPABASE_PROJECT_ID }}
+    steps:
+      - name: Checkout isolated feature branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Reject missing or production credentials
+        run: node scripts/assert-staging-env.mjs
+
+      - name: Install exact dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run pre-APK and club signup tests
+        run: node --test scripts/check-pre-apk.mjs scripts/check-club-enrollment.mjs scripts/check-staging-isolation.mjs
+
+      - name: Build isolated web version
+        run: npm run build
+
+      - name: Publish preview build artifact (not a deployment)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sportpago-usa-staging-web
+          path: dist/
+          retention-days: 3
