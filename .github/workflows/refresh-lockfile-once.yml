@@ -1,0 +1,50 @@
+name: SportPago - reparar dependencias una vez
+
+on:
+  push:
+    branches:
+      - feat/global-onboarding-review-20261027
+    paths:
+      - .github/workflows/refresh-lockfile-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair-lockfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Descargar rama de pruebas
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Usar Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Actualizar solo el archivo de dependencias bloqueadas
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Verificar instalacion reproducible desde cero
+        run: npm ci --no-audit --no-fund
+
+      - name: Comprobar traducciones y controles de acceso
+        run: node --test scripts/check-pre-apk.mjs
+
+      - name: Verificar compilacion web
+        run: npm run build
+
+      - name: Guardar archivo corregido solo en la rama de pruebas
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "chore: synchronize npm lockfile for reproducible pre-APK builds"
+            git push origin "HEAD:refs/heads/feat/global-onboarding-review-20261027"
+          else
+            echo "El archivo de dependencias ya estaba actualizado."
+          fi
