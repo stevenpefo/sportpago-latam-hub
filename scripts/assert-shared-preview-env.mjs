@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 // Web-only preview that shares an existing database with Colombia.
 // Never use this configuration for the Lovable Colombia build.
 const env = process.env;
-const productionProject = 'chklvnjudaschthbqgsc';
+const productionProject = 'myqrrmtubfqlnnqdoams';
 const expectedUrl = `https://${productionProject}.supabase.co`;
 
 assert.equal(env.VITE_DEPLOY_TARGET, 'preview-shared', 'Expected isolated frontend preview (VITE_DEPLOY_TARGET=preview-shared)');
