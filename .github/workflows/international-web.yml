@@ -4,11 +4,17 @@ on:
   push:
     branches:
       - feat/club-self-enrollment-staging
-  pull_request:
-    branches:
-      - feat/global-onboarding-review-20261027
-      - main
+    paths:
+      - 'src/**'
+      - 'scripts/verify-international-browser.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/international-web.yml'
   workflow_dispatch:
+
+concurrency:
+  group: sportpago-browser-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -35,7 +41,7 @@ jobs:
         run: npm install --no-save --package-lock=false --no-audit --no-fund playwright@1.56.1
 
       - name: Instalar Chromium y dependencias para GitHub
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps --only-shell chromium
 
       - name: Probar flujo real de interfaz contra Supabase simulado
         run: node scripts/verify-international-browser.mjs
