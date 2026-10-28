@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feat/global-onboarding-review-20261027
   push:
     branches:
       - feat/global-onboarding-review-20261027
