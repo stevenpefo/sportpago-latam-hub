@@ -5,16 +5,18 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-// Staging-only safeguard: do not allow the invitation feature to connect to
-// the Lovable Colombia Supabase project, even if a preview is misconfigured.
+// Opt-in frontend preview may share the existing Supabase backend.
+// This does NOT publish any code to the Colombia Lovable app. Its safeguards
+// prevent the preview from pointing at an unexpected backend. The club
+// enrollment UI remains disabled by default in every other build.
 const isClubEnrollmentPreview = import.meta.env.VITE_ENABLE_CLUB_INVITES === 'true';
 if (isClubEnrollmentPreview) {
-  const expectedProject = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-  const isStaging = import.meta.env.VITE_DEPLOY_TARGET === 'staging';
-  const isIsolated = expectedProject && expectedProject !== 'chklvnjudaschthbqgsc'
+  const expectedProject = 'chklvnjudaschthbqgsc';
+  const isSharedPreview = import.meta.env.VITE_DEPLOY_TARGET === 'preview-shared';
+  const isExpectedProject = import.meta.env.VITE_SUPABASE_PROJECT_ID === expectedProject
     && SUPABASE_URL === `https://${expectedProject}.supabase.co`;
-  if (!isStaging || !isIsolated) {
-    throw new Error('SportPago self-registration preview requires an isolated staging Supabase project.');
+  if (!isSharedPreview || !isExpectedProject) {
+    throw new Error('SportPago club invitations require the approved shared-backend preview environment.');
   }
 }
 
