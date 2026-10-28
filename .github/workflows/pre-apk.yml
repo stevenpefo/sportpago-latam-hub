@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - feat/global-onboarding-review-20261027
+      - feat/club-self-enrollment-staging
   workflow_dispatch:
 
 permissions:
