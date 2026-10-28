@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import logoSportPago from '@/assets/logo-sportpago-optimized.webp';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,6 +26,7 @@ const nameSchema = z.string().min(2, 'El nombre debe tener al menos 2 caracteres
 
 export default function Auth() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signIn, signUp, signInWithAccessCode } = useAuthContext();
   const { t, language, setLanguage } = useLanguage();
   const { toast } = useToast();
@@ -45,7 +46,7 @@ export default function Auth() {
   const [staffPin, setStaffPin] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('login');
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') === 'signup' ? 'signup' : 'login');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -265,17 +266,17 @@ export default function Auth() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <CardHeader className="pb-4">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="login" className="gap-1 text-xs sm:text-sm">
+              <TabsTrigger value="login" className="gap-1 px-1 text-[11px] sm:px-3 sm:text-sm">
                 <User className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('auth.login')}</span>
+                <span className="inline">{t('auth.login')}</span>
               </TabsTrigger>
-              <TabsTrigger value="signup" className="gap-1 text-xs sm:text-sm">
+              <TabsTrigger value="signup" className="gap-1 px-1 text-[11px] sm:px-3 sm:text-sm">
                 <UserPlus className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('auth.signup')}</span>
+                <span className="inline">{t('auth.signup')}</span>
               </TabsTrigger>
-              <TabsTrigger value="staff" className="gap-1 text-xs sm:text-sm">
+              <TabsTrigger value="staff" className="gap-1 px-1 text-[11px] sm:px-3 sm:text-sm">
                 <KeyRound className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('login.assistant')}</span>
+                <span className="inline">{t('login.assistant')}</span>
               </TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -459,7 +460,8 @@ export default function Auth() {
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="staff-pin"
-                      type="text"
+                      type="password"
+                      inputMode="numeric"
                       placeholder="123456"
                       value={staffPin}
                       onChange={(e) => setStaffPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
@@ -483,6 +485,10 @@ export default function Auth() {
         </Tabs>
       </Card>
 
+      <Link to="/explore" className="mt-5 text-center text-sm font-medium text-primary underline-offset-4 hover:underline">
+        {t("login.explore")}
+      </Link>
+
       {/* Footer */}
       <div className="mt-8 text-center space-y-2">
         <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
@@ -495,7 +501,7 @@ export default function Auth() {
           </Link>
         </div>
         <p className="text-xs text-muted-foreground">
-          SportPago © 2025 • {t('login.footerTagline')}
+          SportPago © {new Date().getFullYear()} • {t('login.footerTagline')}
         </p>
       </div>
     </div>
