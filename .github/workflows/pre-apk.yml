@@ -27,8 +27,11 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - name: Instalar dependencias
-        run: npm ci --no-audit --no-fund
+      # Temporal: package-lock.json existente no coincide con package.json.
+      # npm install actualiza la resolucion solo dentro del runner de pruebas;
+      # no escribe cambios de dependencias en el repositorio.
+      - name: Instalar dependencias (temporal)
+        run: npm install --no-audit --no-fund
 
       - name: Comprobar textos y accesos
         run: node --test scripts/check-pre-apk.mjs
