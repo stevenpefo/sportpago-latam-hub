@@ -18,6 +18,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Landing from "./pages/Landing";
 import Explore from "./pages/Explore";
+import JoinClub from "./pages/JoinClub";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ function AppRoutes() {
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/landing" element={<Landing />} />
       <Route path="/explore" element={<Explore />} />
+      <Route path="/join/:token" element={<JoinClub />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
