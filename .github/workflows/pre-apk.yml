@@ -33,7 +33,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Comprobar textos y accesos
-        run: node --test scripts/check-pre-apk.mjs scripts/check-club-enrollment.mjs
+        run: node --test scripts/check-pre-apk.mjs scripts/check-club-enrollment.mjs scripts/check-staging-isolation.mjs
 
       - name: Compilar version web (sin APK)
         run: npm run build
