@@ -11,7 +11,7 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 // enrollment UI remains disabled by default in every other build.
 const isClubEnrollmentPreview = import.meta.env.VITE_ENABLE_CLUB_INVITES === 'true';
 if (isClubEnrollmentPreview) {
-  const expectedProject = 'chklvnjudaschthbqgsc';
+  const expectedProject = 'myqrrmtubfqlnnqdoams';
   const isSharedPreview = import.meta.env.VITE_DEPLOY_TARGET === 'preview-shared';
   const isExpectedProject = import.meta.env.VITE_SUPABASE_PROJECT_ID === expectedProject
     && SUPABASE_URL === `https://${expectedProject}.supabase.co`;
