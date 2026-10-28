@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import logoSportPago from '@/assets/logo-sportpago-optimized.webp';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,6 +26,7 @@ const nameSchema = z.string().min(2, 'El nombre debe tener al menos 2 caracteres
 
 export default function Auth() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signIn, signUp, signInWithAccessCode } = useAuthContext();
   const { t, language, setLanguage } = useLanguage();
   const { toast } = useToast();
@@ -45,7 +46,7 @@ export default function Auth() {
   const [staffPin, setStaffPin] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('login');
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') === 'signup' ? 'signup' : 'login');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
