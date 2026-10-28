@@ -5,6 +5,20 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+// Staging-only safeguard: do not allow the invitation feature to connect to
+// the Lovable Colombia Supabase project, even if a preview is misconfigured.
+const isClubEnrollmentPreview = import.meta.env.VITE_ENABLE_CLUB_INVITES === 'true';
+if (isClubEnrollmentPreview) {
+  const expectedProject = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+  const isStaging = import.meta.env.VITE_DEPLOY_TARGET === 'staging';
+  const isIsolated = expectedProject && expectedProject !== 'chklvnjudaschthbqgsc'
+    && SUPABASE_URL === `https://${expectedProject}.supabase.co`;
+  if (!isStaging || !isIsolated) {
+    throw new Error('SportPago self-registration preview requires an isolated staging Supabase project.');
+  }
+}
+
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
