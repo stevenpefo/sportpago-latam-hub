@@ -1,3 +1,5 @@
+> **CAMBIO DE DECISIÓN — 28/10/2026:** SportPago USA y Colombia compartirán el Supabase Free que ya existe. Esta guía de proyecto nuevo queda archivada y **NO debe seguirse** para el despliegue acordado. Primero ejecutar únicamente `docs/sql/03_AUDIT_EXISTING_SUPABASE_READ_ONLY.sql`; después preparar una migración aditiva revisada. La protección del preview que exige Supabase separado sigue bloqueando despliegues con la base actual hasta adaptarla después de la auditoría.
+
 # SportPago USA — entorno de pruebas aislado (28 Oct 2026)
 
 ## Objetivo
