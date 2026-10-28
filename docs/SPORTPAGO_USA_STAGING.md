@@ -11,6 +11,13 @@ sitio Lovable de Colombia ni sus usuarios, bases de datos, entrenadores, deporti
 - No usar `.env` de `main` ni sus credenciales.
 - No fusionar el PR #2 con `main` mientras no estén aprobadas las pruebas.
 
+## Preparación rápida para ejecutar SQL manualmente
+
+En un proyecto Supabase **nuevo, sin usuarios y sin tablas SportPago**, usa en este orden:
+1. `docs/sql/01_BOOTSTRAP_USA_STAGING_ONLY.sql` — script combinado de 8 migraciones, con protección frente a tablas existentes y usuarios; se ejecuta en una sola transacción.
+2. `docs/sql/02_VERIFY_USA_STAGING_READ_ONLY.sql` — consulta de verificación sin escritura.
+Si el bootstrap da un error, **no vuelvas a ejecutarlo en otra base**; guarda el error completo y revísalo antes de hacer correcciones. No ejecutes estos archivos en el Supabase de Lovable Colombia. No cargues usuarios reales.
+
 ## 1. Supabase: proyecto NUEVO e independiente
 1. Crear un proyecto en Supabase llamado por ejemplo `sportpago-usa-staging`.
 2. Copiar solo la URL del proyecto, su referencia de proyecto y su **publishable key**.
