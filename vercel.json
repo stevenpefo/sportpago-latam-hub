@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "buildCommand": "node scripts/assert-staging-env.mjs && npm run build",
+  "buildCommand": "node scripts/assert-shared-preview-env.mjs && npm run build",
   "outputDirectory": "dist",
   "rewrites": [
     {
