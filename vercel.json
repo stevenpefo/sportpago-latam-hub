@@ -1,8 +1,11 @@
 {
   "framework": "vite",
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/assert-staging-env.mjs && npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
