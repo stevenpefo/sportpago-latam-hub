@@ -45,7 +45,7 @@
     "loginHere": "Inicia sesión aquí"
   },
   "login": {
-    "tagline": "Gestión de pagos deportivos",
+    "tagline": "Organiza a tus deportistas y sus pagos en un solo lugar",
     "admin": "Administrador",
     "assistant": "Asistente",
     "emailPlaceholder": "tu@email.com",
@@ -75,7 +75,8 @@
     "signupSuccess": "¡Cuenta creada!",
     "signupSuccessDesc": "Tu cuenta ha sido creada exitosamente",
     "staffCodeValid": "Código válido",
-    "staffNeedsAccount": "Por favor crea una cuenta para vincular tu código de asistente"
+    "staffNeedsAccount": "Por favor crea una cuenta para vincular tu código de asistente",
+    "explore": "Conoce cómo funciona SportPago"
   },
   "notFound": {
     "message": "¡Ups! Página no encontrada",
