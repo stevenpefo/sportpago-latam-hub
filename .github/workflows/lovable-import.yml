@@ -1,0 +1,31 @@
+name: SportPago Internacional - paquete para Lovable
+
+on:
+  push:
+    branches:
+      - feat/club-self-enrollment-staging
+    paths:
+      - scripts/build_lovable_import.py
+      - .github/workflows/lovable-import.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Descargar solo rama internacional
+        uses: actions/checkout@v4
+
+      - name: Crear ZIP sin claves ni migraciones de base
+        run: python3 scripts/build_lovable_import.py
+
+      - name: Publicar el paquete descargable
+        uses: actions/upload-artifact@v4
+        with:
+          name: SPORTPAGO-USA-LOVABLE-IMPORT
+          path: build-output/sportpago-internacional-lovable-import.zip
+          retention-days: 7
