@@ -42,6 +42,7 @@ import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { matchesSearch } from '@/utils/textUtils';
 import { SportIconDisplay } from '@/utils/sportIcons';
+import { ClubSelfRegistration } from '@/components/athletes/ClubSelfRegistration';
 
 export default function Athletes() {
   const { 
@@ -235,6 +236,11 @@ export default function Athletes() {
             )}
           </div>
         </div>
+
+        {/* Optional self-enrollment: disabled unless staging flag is enabled */}
+        {isAdmin && establecimiento?.id && (
+          <ClubSelfRegistration establecimientoId={establecimiento.id} />
+        )}
 
         {/* Search */}
         <div className="relative">

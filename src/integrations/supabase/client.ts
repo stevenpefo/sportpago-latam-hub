@@ -5,6 +5,22 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+// Opt-in frontend preview may share the existing Supabase backend.
+// This does NOT publish any code to the Colombia Lovable app. Its safeguards
+// prevent the preview from pointing at an unexpected backend. The club
+// enrollment UI remains disabled by default in every other build.
+const isClubEnrollmentPreview = import.meta.env.VITE_ENABLE_CLUB_INVITES === 'true';
+if (isClubEnrollmentPreview) {
+  const expectedProject = 'myqrrmtubfqlnnqdoams';
+  const isSharedPreview = import.meta.env.VITE_DEPLOY_TARGET === 'preview-shared';
+  const isExpectedProject = import.meta.env.VITE_SUPABASE_PROJECT_ID === expectedProject
+    && SUPABASE_URL === `https://${expectedProject}.supabase.co`;
+  if (!isSharedPreview || !isExpectedProject) {
+    throw new Error('SportPago club invitations require the approved shared-backend preview environment.');
+  }
+}
+
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 

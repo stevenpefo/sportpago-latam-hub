@@ -1,0 +1,26 @@
+name: SportPago - API de Supabase sin tocar datos reales
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: Seguridad anonima y RPC de Supabase (solo llamadas seguras)
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      SPORTPAGO_SUPABASE_ANON_KEY: ${{ secrets.SPORTPAGO_SUPABASE_ANON_KEY }}
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validar permisos anonimos sin escribir registros validos
+        run: node --test scripts/verify-live-supabase.mjs

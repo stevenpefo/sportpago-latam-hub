@@ -1,0 +1,47 @@
+name: SportPago - pruebas web internacionales sin datos reales
+
+on:
+  push:
+    branches:
+      - feat/club-self-enrollment-staging
+    paths:
+      - 'src/**'
+      - 'scripts/verify-international-browser.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/international-web.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: sportpago-browser-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    name: Chrome - 4 idiomas, autoinscripcion y movil
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias exactas
+        run: npm ci --no-audit --no-fund
+
+      - name: Instalar Playwright de pruebas sin cambiar lockfile
+        run: npm install --no-save --package-lock=false --no-audit --no-fund playwright@1.56.1
+
+      - name: Instalar Chromium y dependencias para GitHub
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Probar flujo real de interfaz contra Supabase simulado
+        run: node scripts/verify-international-browser.mjs

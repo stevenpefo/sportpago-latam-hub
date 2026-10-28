@@ -4,9 +4,11 @@ on:
   pull_request:
     branches:
       - main
+      - feat/global-onboarding-review-20261027
   push:
     branches:
       - feat/global-onboarding-review-20261027
+      - feat/club-self-enrollment-staging
   workflow_dispatch:
 
 permissions:
@@ -31,7 +33,10 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Comprobar textos y accesos
-        run: node --test scripts/check-pre-apk.mjs
+        run: node --test scripts/check-pre-apk.mjs scripts/check-club-enrollment.mjs scripts/check-staging-isolation.mjs
+
+      - name: Verificar tipos TypeScript
+        run: npx tsc --noEmit -p tsconfig.app.json
 
       - name: Compilar version web (sin APK)
         run: npm run build
