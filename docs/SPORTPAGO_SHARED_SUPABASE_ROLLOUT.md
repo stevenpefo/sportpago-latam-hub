@@ -20,8 +20,8 @@ Branch: `feat/club-self-enrollment-staging`; PR borrador #2. Archivo `vercel.jso
 Variables en Vercel **solo para este nuevo sitio preview**, nunca Lovable Colombia:
 - `VITE_DEPLOY_TARGET=preview-shared`
 - `VITE_ENABLE_CLUB_INVITES=true`
-- `VITE_SUPABASE_PROJECT_ID=chklvnjudaschthbqgsc`
-- `VITE_SUPABASE_URL=https://chklvnjudaschthbqgsc.supabase.co`
+- `VITE_SUPABASE_PROJECT_ID=myqrrmtubfqlnnqdoams`
+- `VITE_SUPABASE_URL=https://myqrrmtubfqlnnqdoams.supabase.co`
 - `VITE_SUPABASE_PUBLISHABLE_KEY` = la **clave pública anon/publishable**, no service_role ni secret key. Configurarla en Vercel, no guardar en Git.
 
 El frontend preview comparte datos existentes, por lo que **no es un sandbox de datos**. Usar solicitudes ficticias, no datos reales de menores mientras no se completen medidas de privacidad. No fusionar PR #2 ni cambiar URL de Lovable o configuración de APK.
@@ -42,3 +42,6 @@ No es necesario en este primer paso. Solo después, para avisos transaccionales;
 - SQL 04: escrito, todavía NO ejecutado en la base compartida.
 - Web preview: código preparado, todavía SIN enlace desplegado.
 - Producción Colombia: aún sin cambios de esquema ni frontend a través de este flujo.
+
+## Verificación de identidad del proyecto (no asumir identidad de Lovable)
+El SQL 04 se ejecutó con éxito en `myqrrmtubfqlnnqdoams`, donde el usuario mostró 26 clubes, 54 deportistas y 22 transacciones, 0 enlaces y 0 solicitudes. El repositorio `main` todavía usa un project ref distinto (`chklvnjudaschthbqgsc`) y su configuración se deja intacta. **Antes de desplegar el preview confirmar desde la configuración de Lovable cuál de estos proyectos alimenta la web colombiana.** La rama de pruebas apunta únicamente al proyecto donde se instaló el SQL; no publicar ni mezclar ramas hasta confirmar coincidencia.
