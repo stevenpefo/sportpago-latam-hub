@@ -1,0 +1,37 @@
+name: SportPago - comprobaciones antes de APK
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - feat/global-onboarding-review-20261027
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pre-apk:
+    name: Verificar codigo y traducciones
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci --no-audit --no-fund
+
+      - name: Comprobar textos y accesos
+        run: node --test scripts/check-pre-apk.mjs
+
+      - name: Compilar version web (sin APK)
+        run: npm run build
